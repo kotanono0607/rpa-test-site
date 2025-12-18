@@ -22,6 +22,8 @@
           <li><a href="table.html">テーブル</a></li>
           <li><a href="popup.html">ポップアップ</a></li>
           <li><a href="dynamic.html">動的</a></li>
+          <li><a href="advanced.html">高度</a></li>
+          <li><a href="challenge.html">挑戦</a></li>
         </ul>
       </nav>
     </div>
@@ -164,10 +166,80 @@
 
           <!-- 操作ログ -->
           <div class="card">
-            <div class="card-title">📜 操作ログ</div>
+            <div class="card-title">📜 操作ログ
+              <button class="export-btn" onclick="ログをエクスポート('form-log')" style="float:right;">📥 CSV</button>
+              <button class="export-btn" onclick="ログをJSONエクスポート('form-log')" style="float:right;margin-right:8px;">📥 JSON</button>
+            </div>
             <div id="form-log" class="log-area">
               <div class="log-entry"><span class="log-time">[--:--:--]</span>ログがここに表示されます</div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライダー/レンジ入力 -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">🎚️ スライダー/レンジ入力
+          <button class="guide-toggle" onclick="ガイドを切り替え('slider-guide')">RPA実装例</button>
+        </div>
+        <div id="slider-guide" class="guide-panel">
+          <span class="comment">// スライダーの値を設定</span><br>
+          <span class="keyword">element</span> = driver.find_element(<span class="string">"id"</span>, <span class="string">"volume-slider"</span>)<br>
+          driver.execute_script(<span class="string">"arguments[0].value = 75"</span>, element)<br>
+          element.dispatchEvent(new Event(<span class="string">'input'</span>))
+        </div>
+        <div class="form-group">
+          <label for="volume-slider">音量: <span id="volume-slider-value" class="range-value">50</span></label>
+          <div class="range-container">
+            <span>0</span>
+            <input type="range" id="volume-slider" min="0" max="100" value="50">
+            <span>100</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="brightness-slider">明るさ: <span id="brightness-slider-value" class="range-value">70</span>%</label>
+          <div class="range-container">
+            <span>0%</span>
+            <input type="range" id="brightness-slider" min="0" max="100" value="70">
+            <span>100%</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="price-slider">価格帯: ¥<span id="price-slider-value" class="range-value">5000</span></label>
+          <div class="range-container">
+            <span>¥0</span>
+            <input type="range" id="price-slider" min="0" max="10000" step="100" value="5000">
+            <span>¥10000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 日時ピッカー -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">📅 日時ピッカー
+          <button class="guide-toggle" onclick="ガイドを切り替え('datetime-guide')">RPA実装例</button>
+        </div>
+        <div id="datetime-guide" class="guide-panel">
+          <span class="comment">// 日時の設定</span><br>
+          <span class="keyword">element</span> = driver.find_element(<span class="string">"id"</span>, <span class="string">"datetime-input"</span>)<br>
+          element.send_keys(<span class="string">"2024-12-25T10:30"</span>)
+        </div>
+        <div class="datetime-picker-container">
+          <div class="form-group">
+            <label for="datetime-input">日時</label>
+            <input type="datetime-local" id="datetime-input">
+          </div>
+          <div class="form-group">
+            <label for="time-input">時間のみ</label>
+            <input type="time" id="time-input">
+          </div>
+          <div class="form-group">
+            <label for="month-input">月</label>
+            <input type="month" id="month-input">
+          </div>
+          <div class="form-group">
+            <label for="week-input">週</label>
+            <input type="week" id="week-input">
           </div>
         </div>
       </div>

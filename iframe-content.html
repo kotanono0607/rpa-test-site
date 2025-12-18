@@ -1,0 +1,124 @@
+<!-- iframe-content.html - iframe内コンテンツ -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iframe コンテンツ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      min-height: 100%;
+    }
+    h3 {
+      margin-bottom: 12px;
+    }
+    .iframe-form {
+      background: rgba(255,255,255,0.2);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+    }
+    input[type="text"], input[type="email"] {
+      width: 100%;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .btn {
+      background: white;
+      color: #667eea;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 8px;
+      margin-top: 8px;
+    }
+    .btn:hover {
+      background: #f0f0f0;
+    }
+    .result {
+      background: rgba(0,0,0,0.2);
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+    .counter {
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+  <h3>🖼️ iframe内のコンテンツ</h3>
+
+  <div class="iframe-form">
+    <div class="form-group">
+      <label for="iframe-name">名前</label>
+      <input type="text" id="iframe-name" placeholder="iframe内で入力">
+    </div>
+    <div class="form-group">
+      <label for="iframe-email">メール</label>
+      <input type="email" id="iframe-email" placeholder="email@example.com">
+    </div>
+  </div>
+
+  <div class="counter">
+    クリック数: <span id="iframe-counter">0</span>
+  </div>
+
+  <button class="btn" id="iframe-btn" onclick="カウントアップ()">カウントアップ</button>
+  <button class="btn" onclick="フォーム送信()">送信</button>
+  <button class="btn" onclick="リセット()">リセット</button>
+
+  <div id="iframe-result" class="result">
+    結果がここに表示されます
+  </div>
+
+  <script>
+    let count = 0;
+
+    function カウントアップ() {
+      count++;
+      document.getElementById('iframe-counter').textContent = count;
+    }
+
+    function フォーム送信() {
+      const name = document.getElementById('iframe-name').value;
+      const email = document.getElementById('iframe-email').value;
+      document.getElementById('iframe-result').innerHTML =
+        `<strong>送信データ:</strong><br>名前: ${name || '(未入力)'}<br>メール: ${email || '(未入力)'}`;
+    }
+
+    function リセット() {
+      count = 0;
+      document.getElementById('iframe-counter').textContent = '0';
+      document.getElementById('iframe-name').value = '';
+      document.getElementById('iframe-email').value = '';
+      document.getElementById('iframe-result').textContent = '結果がここに表示されます';
+    }
+  </script>
+</body>
+</html>

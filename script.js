@@ -781,17 +781,588 @@ function ファイルを処理(files) {
 }
 
 // ========================================
+// セレクタ表示機能
+// ========================================
+
+let セレクタモード有効 = false;
+let 現在のツールチップ = null;
+let 前回ハイライト要素 = null;
+
+/**
+ * 要素のCSSセレクタを生成
+ */
+function CSSセレクタを生成(element) {
+  if (element.id) {
+    return `#${element.id}`;
+  }
+
+  let path = [];
+  while (element && element.nodeType === Node.ELEMENT_NODE) {
+    let selector = element.tagName.toLowerCase();
+    if (element.id) {
+      selector = `#${element.id}`;
+      path.unshift(selector);
+      break;
+    } else if (element.className && typeof element.className === 'string') {
+      const classes = element.className.trim().split(/\s+/).filter(c => c && !c.startsWith('element-'));
+      if (classes.length > 0) {
+        selector += '.' + classes.join('.');
+      }
+    }
+
+    const siblings = element.parentNode ? Array.from(element.parentNode.children).filter(e => e.tagName === element.tagName) : [];
+    if (siblings.length > 1) {
+      const index = siblings.indexOf(element) + 1;
+      selector += `:nth-of-type(${index})`;
+    }
+
+    path.unshift(selector);
+    element = element.parentNode;
+  }
+  return path.join(' > ');
+}
+
+/**
+ * 要素のXPathを生成
+ */
+function XPathを生成(element) {
+  if (element.id) {
+    return `//*[@id="${element.id}"]`;
+  }
+
+  let path = [];
+  while (element && element.nodeType === Node.ELEMENT_NODE) {
+    let selector = element.tagName.toLowerCase();
+
+    if (element.id) {
+      return `//*[@id="${element.id}"]/${path.join('/')}`;
+    }
+
+    const siblings = element.parentNode ? Array.from(element.parentNode.children).filter(e => e.tagName === element.tagName) : [];
+    if (siblings.length > 1) {
+      const index = siblings.indexOf(element) + 1;
+      selector += `[${index}]`;
+    }
+
+    path.unshift(selector);
+    element = element.parentNode;
+  }
+  return '/' + path.join('/');
+}
+
+/**
+ * セレクタツールチップを表示
+ */
+function セレクタツールチップを表示(e) {
+  if (!セレクタモード有効) return;
+
+  const target = e.target;
+  if (target.closest('.selector-mode-toggle') || target.closest('.selector-tooltip')) return;
+
+  if (前回ハイライト要素) {
+    前回ハイライト要素.classList.remove('element-highlight');
+  }
+  target.classList.add('element-highlight');
+  前回ハイライト要素 = target;
+
+  if (!現在のツールチップ) {
+    現在のツールチップ = document.createElement('div');
+    現在のツールチップ.className = 'selector-tooltip';
+    document.body.appendChild(現在のツールチップ);
+  }
+
+  const css = CSSセレクタを生成(target);
+  const xpath = XPathを生成(target);
+
+  現在のツールチップ.innerHTML = `
+    <div><span class="selector-type">CSS:</span>${css}</div>
+    <div style="margin-top:4px;"><span class="selector-type">XPath:</span>${xpath}</div>
+  `;
+
+  現在のツールチップ.style.left = (e.clientX + 15) + 'px';
+  現在のツールチップ.style.top = (e.clientY + 15) + 'px';
+  現在のツールチップ.style.display = 'block';
+}
+
+/**
+ * セレクタモードを切り替え
+ */
+function セレクタモードを切り替え(enabled) {
+  セレクタモード有効 = enabled;
+
+  if (!enabled) {
+    if (現在のツールチップ) {
+      現在のツールチップ.style.display = 'none';
+    }
+    if (前回ハイライト要素) {
+      前回ハイライト要素.classList.remove('element-highlight');
+      前回ハイライト要素 = null;
+    }
+  }
+}
+
+/**
+ * セレクタモードUIを初期化
+ */
+function セレクタモードUIを初期化() {
+  const toggle = document.createElement('div');
+  toggle.className = 'selector-mode-toggle';
+  toggle.innerHTML = `
+    <input type="checkbox" id="selector-mode-checkbox">
+    <label for="selector-mode-checkbox">セレクタ表示</label>
+  `;
+  document.body.appendChild(toggle);
+
+  document.getElementById('selector-mode-checkbox').addEventListener('change', function() {
+    セレクタモードを切り替え(this.checked);
+  });
+
+  document.addEventListener('mousemove', セレクタツールチップを表示);
+}
+
+// ========================================
+// スライダー/レンジ入力
+// ========================================
+
+/**
+ * スライダーを初期化
+ */
+function スライダーを初期化() {
+  document.querySelectorAll('input[type="range"]').forEach(slider => {
+    const valueDisplay = document.getElementById(slider.id + '-value');
+    if (valueDisplay) {
+      valueDisplay.textContent = slider.value;
+      slider.addEventListener('input', function() {
+        valueDisplay.textContent = this.value;
+        ログを追加('form-log', `スライダー変更: ${this.id} = ${this.value}`);
+      });
+    }
+  });
+}
+
+// ========================================
+// 日時ピッカー
+// ========================================
+
+/**
+ * 日時ピッカーを初期化
+ */
+function 日時ピッカーを初期化() {
+  document.querySelectorAll('input[type="datetime-local"], input[type="time"], input[type="month"], input[type="week"]').forEach(picker => {
+    picker.addEventListener('change', function() {
+      ログを追加('form-log', `日時変更: ${this.id} = ${this.value}`);
+    });
+  });
+}
+
+// ========================================
+// チャレンジモード
+// ========================================
+
+let チャレンジ中 = false;
+let チャレンジタイマー = null;
+let チャレンジ残り時間 = 0;
+let チャレンジ目標 = [];
+let チャレンジ進捗 = 0;
+
+const チャレンジ一覧 = [
+  { 名前: 'スピードクリック', 説明: '5秒以内にA→B→C→D→Eの順にクリック', 制限時間: 5, ページ: 'click.html' },
+  { 名前: '入力チャレンジ', 説明: '10秒以内に名前とメールを入力して送信', 制限時間: 10, ページ: 'form.html' },
+  { 名前: 'テーブル検索', 説明: '8秒以内に「りんご」を検索して選択', 制限時間: 8, ページ: 'table.html' },
+];
+
+/**
+ * チャレンジを開始
+ */
+function チャレンジを開始(チャレンジ番号) {
+  const challenge = チャレンジ一覧[チャレンジ番号];
+  if (!challenge) return;
+
+  チャレンジ中 = true;
+  チャレンジ残り時間 = challenge.制限時間;
+  チャレンジ進捗 = 0;
+
+  const banner = document.getElementById('challenge-banner');
+  if (banner) {
+    banner.classList.remove('hidden');
+    document.getElementById('challenge-mission').textContent = challenge.説明;
+    document.getElementById('challenge-timer').textContent = チャレンジ残り時間 + '秒';
+  }
+
+  チャレンジタイマー = setInterval(() => {
+    チャレンジ残り時間--;
+    const timerEl = document.getElementById('challenge-timer');
+    if (timerEl) timerEl.textContent = チャレンジ残り時間 + '秒';
+
+    if (チャレンジ残り時間 <= 0) {
+      チャレンジを終了(false);
+    }
+  }, 1000);
+}
+
+/**
+ * チャレンジを終了
+ */
+function チャレンジを終了(成功) {
+  チャレンジ中 = false;
+  clearInterval(チャレンジタイマー);
+
+  const banner = document.getElementById('challenge-banner');
+  const result = document.getElementById('challenge-result');
+
+  if (banner) banner.classList.add('hidden');
+  if (result) {
+    result.classList.remove('hidden');
+    result.className = 'challenge-result ' + (成功 ? 'success' : 'failure');
+    result.innerHTML = 成功
+      ? '<h2>🎉 チャレンジ成功!</h2><p>おめでとうございます！</p>'
+      : '<h2>😢 タイムオーバー</h2><p>もう一度挑戦してみましょう！</p>';
+  }
+}
+
+// ========================================
+// 操作ガイド表示
+// ========================================
+
+/**
+ * 操作ガイドを切り替え
+ */
+function ガイドを切り替え(guideId) {
+  const panel = document.getElementById(guideId);
+  if (panel) {
+    panel.classList.toggle('active');
+  }
+}
+
+// ========================================
+// ログエクスポート
+// ========================================
+
+/**
+ * ログをCSVでエクスポート
+ */
+function ログをエクスポート(logAreaId) {
+  const logArea = document.getElementById(logAreaId);
+  if (!logArea) return;
+
+  const entries = logArea.querySelectorAll('.log-entry');
+  let csv = '時刻,メッセージ\n';
+
+  entries.forEach(entry => {
+    const time = entry.querySelector('.log-time')?.textContent || '';
+    const message = entry.textContent.replace(time, '').trim();
+    csv += `"${time}","${message}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `rpa-log-${Date.now()}.csv`;
+  link.click();
+}
+
+/**
+ * ログをJSONでエクスポート
+ */
+function ログをJSONエクスポート(logAreaId) {
+  const logArea = document.getElementById(logAreaId);
+  if (!logArea) return;
+
+  const entries = logArea.querySelectorAll('.log-entry');
+  const data = [];
+
+  entries.forEach(entry => {
+    const time = entry.querySelector('.log-time')?.textContent || '';
+    const message = entry.textContent.replace(time, '').trim();
+    data.push({ time, message });
+  });
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `rpa-log-${Date.now()}.json`;
+  link.click();
+}
+
+// ========================================
+// ページリセット
+// ========================================
+
+/**
+ * ページをリセット
+ */
+function ページをリセット() {
+  // フォームをリセット
+  document.querySelectorAll('form').forEach(form => form.reset());
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.type === 'checkbox' || el.type === 'radio') {
+      el.checked = el.defaultChecked;
+    } else {
+      el.value = el.defaultValue;
+    }
+  });
+
+  // ログをクリア
+  document.querySelectorAll('.log-area').forEach(log => {
+    log.innerHTML = '<div class="log-entry"><span class="log-time">[--:--:--]</span>ページがリセットされました</div>';
+  });
+
+  // 結果表示をクリア
+  document.querySelectorAll('.result-area').forEach(area => {
+    area.classList.remove('active');
+    area.textContent = '結果がここに表示されます';
+  });
+
+  // カウンターをリセット
+  document.querySelectorAll('[id^="count-"]').forEach(counter => {
+    counter.textContent = '0';
+  });
+
+  // 動的コンテンツをクリア
+  const dynamicContainer = document.getElementById('dynamic-container');
+  if (dynamicContainer) dynamicContainer.innerHTML = '';
+
+  console.log('Page reset completed');
+}
+
+/**
+ * リセットボタンを追加
+ */
+function リセットボタンを追加() {
+  const btn = document.createElement('button');
+  btn.className = 'page-reset-btn';
+  btn.textContent = '🔄 リセット';
+  btn.onclick = ページをリセット;
+  document.body.appendChild(btn);
+}
+
+// ========================================
+// ファイルダウンロード
+// ========================================
+
+/**
+ * CSVファイルをダウンロード
+ */
+function CSVをダウンロード() {
+  const data = サンプル商品データ.map(item =>
+    `${item.id},${item.名前},${item.価格},${item.在庫},${item.状態}`
+  ).join('\n');
+
+  const csv = 'ID,商品名,価格,在庫,状態\n' + data;
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'products.csv';
+  link.click();
+
+  ログを追加('table-log', 'CSVファイルをダウンロードしました');
+}
+
+/**
+ * JSONファイルをダウンロード
+ */
+function JSONをダウンロード() {
+  const blob = new Blob([JSON.stringify(サンプル商品データ, null, 2)], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'products.json';
+  link.click();
+
+  ログを追加('table-log', 'JSONファイルをダウンロードしました');
+}
+
+// ========================================
+// タブ/ウィンドウ操作
+// ========================================
+
+/**
+ * 新しいタブで開く
+ */
+function 新しいタブで開く(url) {
+  window.open(url, '_blank');
+  ログを追加('advanced-log', `新しいタブで開きました: ${url}`);
+}
+
+/**
+ * ポップアップウィンドウを開く
+ */
+function ポップアップを開く() {
+  const popup = window.open('', 'popup', 'width=400,height=300');
+  popup.document.write(`
+    <html>
+    <head><title>ポップアップウィンドウ</title></head>
+    <body style="font-family: sans-serif; padding: 20px; text-align: center;">
+      <h2>ポップアップウィンドウ</h2>
+      <p>これは新しいウィンドウです</p>
+      <button onclick="window.close()">閉じる</button>
+    </body>
+    </html>
+  `);
+  ログを追加('advanced-log', 'ポップアップウィンドウを開きました');
+}
+
+// ========================================
+// シャドウDOM
+// ========================================
+
+/**
+ * シャドウDOMを初期化
+ */
+function シャドウDOMを初期化() {
+  const host = document.getElementById('shadow-host');
+  if (!host || host.shadowRoot) return;
+
+  const shadow = host.attachShadow({ mode: 'open' });
+  shadow.innerHTML = `
+    <style>
+      .shadow-content {
+        padding: 16px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 8px;
+        color: white;
+      }
+      .shadow-btn {
+        background: white;
+        color: #667eea;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 12px;
+      }
+      .shadow-input {
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        margin-top: 12px;
+        width: 200px;
+      }
+    </style>
+    <div class="shadow-content">
+      <h3>シャドウDOM内の要素</h3>
+      <p>この要素はシャドウDOM内にあります</p>
+      <input type="text" class="shadow-input" id="shadow-input" placeholder="シャドウ内入力">
+      <br>
+      <button class="shadow-btn" id="shadow-btn">シャドウボタン</button>
+    </div>
+  `;
+
+  shadow.getElementById('shadow-btn').addEventListener('click', () => {
+    const input = shadow.getElementById('shadow-input');
+    alert('シャドウDOM内ボタンがクリックされました！\n入力値: ' + input.value);
+    ログを追加('advanced-log', `シャドウDOMボタンクリック: ${input.value}`);
+  });
+}
+
+// ========================================
+// CAPTCHAモック
+// ========================================
+
+let CAPTCHA正解 = [];
+
+/**
+ * CAPTCHAを初期化
+ */
+function CAPTCHAを初期化() {
+  const images = document.querySelectorAll('.captcha-image');
+  const items = ['🚗', '🚌', '🚁', '🚂', '🚢', '✈️', '🚲', '🛵', '🚀'];
+  const 正解アイテム = '🚗';
+
+  CAPTCHA正解 = [];
+
+  images.forEach((img, index) => {
+    const item = items[index % items.length];
+    img.textContent = item;
+    img.dataset.item = item;
+    img.classList.remove('selected');
+
+    if (item === 正解アイテム) {
+      CAPTCHA正解.push(index);
+    }
+
+    img.onclick = function() {
+      this.classList.toggle('selected');
+    };
+  });
+}
+
+/**
+ * CAPTCHAを検証
+ */
+function CAPTCHAを検証() {
+  const selected = [];
+  document.querySelectorAll('.captcha-image.selected').forEach((img, i) => {
+    selected.push(Array.from(document.querySelectorAll('.captcha-image')).indexOf(img));
+  });
+
+  const 正解 = JSON.stringify(selected.sort()) === JSON.stringify(CAPTCHA正解.sort());
+
+  const checkbox = document.querySelector('.captcha-checkbox');
+  if (checkbox) {
+    if (正解) {
+      checkbox.classList.add('checked');
+      checkbox.innerHTML = '✓';
+      ログを追加('advanced-log', 'CAPTCHA認証成功');
+    } else {
+      alert('選択が正しくありません。もう一度お試しください。');
+      ログを追加('advanced-log', 'CAPTCHA認証失敗');
+    }
+  }
+}
+
+// ========================================
+// 難易度設定
+// ========================================
+
+let 現在の難易度 = 'easy';
+
+/**
+ * 難易度を変更
+ */
+function 難易度を変更(level) {
+  現在の難易度 = level;
+  document.querySelectorAll('.difficulty-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.level === level);
+  });
+
+  // 難易度に応じて要素のIDを変更
+  document.querySelectorAll('[data-easy-id]').forEach(el => {
+    switch(level) {
+      case 'easy':
+        el.id = el.dataset.easyId;
+        break;
+      case 'medium':
+        el.id = '';
+        el.className = el.dataset.mediumClass || el.className;
+        break;
+      case 'hard':
+        el.id = '';
+        el.className = '';
+        break;
+    }
+  });
+
+  ログを追加('form-log', `難易度変更: ${level}`);
+}
+
+// ========================================
 // 初期化
 // ========================================
 
 document.addEventListener('DOMContentLoaded', function() {
   // 現在のページに応じた初期化
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  
+
+  // 共通初期化
+  セレクタモードUIを初期化();
+  リセットボタンを追加();
+
   switch (currentPage) {
     case 'form.html':
       オートコンプリートを初期化('autocomplete-input', 'autocomplete-list', 都道府県リスト);
       ファイルアップロードを初期化();
+      スライダーを初期化();
+      日時ピッカーを初期化();
       break;
     case 'click.html':
       クリックテストを初期化();
@@ -804,7 +1375,14 @@ document.addEventListener('DOMContentLoaded', function() {
     case 'table.html':
       テーブルを描画();
       break;
+    case 'advanced.html':
+      シャドウDOMを初期化();
+      CAPTCHAを初期化();
+      break;
+    case 'challenge.html':
+      // チャレンジページの初期化
+      break;
   }
-  
+
   console.log('RPA Test Site initialized:', currentPage);
 });

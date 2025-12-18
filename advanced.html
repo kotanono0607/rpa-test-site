@@ -1,0 +1,173 @@
+<!-- advanced.html - 高度なテストページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高度なテスト - RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="form.html">入力フォーム</a></li>
+          <li><a href="click.html">クリック</a></li>
+          <li><a href="keyboard.html">キーボード</a></li>
+          <li><a href="wait.html">待機</a></li>
+          <li><a href="table.html">テーブル</a></li>
+          <li><a href="popup.html">ポップアップ</a></li>
+          <li><a href="dynamic.html">動的</a></li>
+          <li><a href="advanced.html" class="active">高度</a></li>
+          <li><a href="challenge.html">挑戦</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">🚀 高度なテスト</h1>
+      <p class="page-description">iframe、シャドウDOM、CAPTCHA、タブ/ウィンドウ切替など、上級者向けのテスト要素を含みます。</p>
+
+      <div class="grid-2">
+        <!-- iframe テスト -->
+        <div class="card">
+          <div class="card-title">🖼️ iframe テスト
+            <button class="guide-toggle" onclick="ガイドを切り替え('iframe-guide')">RPA実装例</button>
+          </div>
+          <div id="iframe-guide" class="guide-panel">
+            <span class="comment">// iframeに切り替え</span><br>
+            driver.switch_to.frame(<span class="string">"test-iframe"</span>)<br>
+            <span class="comment">// iframe内の要素を操作</span><br>
+            element = driver.find_element(<span class="string">"id"</span>, <span class="string">"iframe-btn"</span>)<br>
+            element.click()<br>
+            <span class="comment">// 親フレームに戻る</span><br>
+            driver.switch_to.default_content()
+          </div>
+          <p style="margin-bottom: 16px; color: var(--secondary);">iframe内の要素にアクセスするにはフレームの切り替えが必要です</p>
+          <div class="iframe-container">
+            <iframe id="test-iframe" name="test-iframe" src="iframe-content.html"></iframe>
+          </div>
+        </div>
+
+        <!-- タブ/ウィンドウ操作 -->
+        <div class="card">
+          <div class="card-title">🪟 タブ/ウィンドウ操作
+            <button class="guide-toggle" onclick="ガイドを切り替え('window-guide')">RPA実装例</button>
+          </div>
+          <div id="window-guide" class="guide-panel">
+            <span class="comment">// 新しいタブで開く</span><br>
+            driver.execute_script(<span class="string">"window.open('url', '_blank')"</span>)<br>
+            <span class="comment">// タブを切り替え</span><br>
+            driver.switch_to.window(driver.window_handles[1])<br>
+            <span class="comment">// 元のタブに戻る</span><br>
+            driver.switch_to.window(driver.window_handles[0])
+          </div>
+          <p style="margin-bottom: 16px; color: var(--secondary);">新しいタブやポップアップウィンドウを開いて操作します</p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="新しいタブで開く('https://example.com')">新しいタブで開く</button>
+            <button class="btn btn-secondary" onclick="ポップアップを開く()">ポップアップを開く</button>
+            <button class="btn btn-success" onclick="新しいタブで開く('form.html')">フォームを新タブで</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- シャドウDOM -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">🌑 シャドウDOM
+          <button class="guide-toggle" onclick="ガイドを切り替え('shadow-guide')">RPA実装例</button>
+        </div>
+        <div id="shadow-guide" class="guide-panel">
+          <span class="comment">// シャドウDOM内の要素にアクセス</span><br>
+          host = driver.find_element(<span class="string">"id"</span>, <span class="string">"shadow-host"</span>)<br>
+          shadow_root = driver.execute_script(<span class="string">"return arguments[0].shadowRoot"</span>, host)<br>
+          button = shadow_root.find_element(<span class="string">"css selector"</span>, <span class="string">".shadow-btn"</span>)<br>
+          button.click()
+        </div>
+        <p style="margin-bottom: 16px; color: var(--secondary);">シャドウDOM内の要素は通常のセレクタでは取得できません。shadowRootを経由してアクセスします。</p>
+        <div id="shadow-host" class="shadow-host">
+          <!-- シャドウDOMがここに挿入される -->
+        </div>
+      </div>
+
+      <!-- CAPTCHAモック -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">🤖 CAPTCHAモック
+          <button class="guide-toggle" onclick="ガイドを切り替え('captcha-guide')">RPA実装例</button>
+        </div>
+        <div id="captcha-guide" class="guide-panel">
+          <span class="comment">// 注意: 実際のCAPTCHAは自動化が困難です</span><br>
+          <span class="comment">// テスト環境ではモックを使用することを推奨</span><br>
+          <span class="comment">// 画像選択型の場合:</span><br>
+          images = driver.find_elements(<span class="string">"class name"</span>, <span class="string">"captcha-image"</span>)<br>
+          <span class="keyword">for</span> img <span class="keyword">in</span> images:<br>
+          &nbsp;&nbsp;<span class="keyword">if</span> <span class="string">"車"</span> <span class="keyword">in</span> img.get_attribute(<span class="string">"data-item"</span>):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;img.click()
+        </div>
+        <p style="margin-bottom: 16px; color: var(--secondary);">「車」の画像（🚗）をすべて選択してください</p>
+        <div class="captcha-container">
+          <div class="captcha-header">
+            <div class="captcha-checkbox" onclick="CAPTCHAを検証()"></div>
+            <span>私はロボットではありません</span>
+          </div>
+          <div class="captcha-images">
+            <div class="captcha-image" data-index="0"></div>
+            <div class="captcha-image" data-index="1"></div>
+            <div class="captcha-image" data-index="2"></div>
+            <div class="captcha-image" data-index="3"></div>
+            <div class="captcha-image" data-index="4"></div>
+            <div class="captcha-image" data-index="5"></div>
+            <div class="captcha-image" data-index="6"></div>
+            <div class="captcha-image" data-index="7"></div>
+            <div class="captcha-image" data-index="8"></div>
+          </div>
+          <button class="btn btn-primary" onclick="CAPTCHAを初期化()" style="margin-top: 12px; width: 100%;">リセット</button>
+        </div>
+      </div>
+
+      <!-- 操作ログ -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">📜 操作ログ
+          <button class="export-btn" onclick="ログをエクスポート('advanced-log')" style="float:right;">📥 CSV</button>
+        </div>
+        <div id="advanced-log" class="log-area">
+          <div class="log-entry"><span class="log-time">[--:--:--]</span>高度なテストページが読み込まれました</div>
+        </div>
+      </div>
+
+      <!-- 要素ID一覧 -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">🏷️ 要素ID一覧（RPA開発用）</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>要素</th>
+                <th>識別子</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>iframe</td><td><code>test-iframe</code></td><td>テスト用iframe</td></tr>
+              <tr><td>シャドウホスト</td><td><code>shadow-host</code></td><td>シャドウDOMのホスト要素</td></tr>
+              <tr><td>CAPTCHAチェックボックス</td><td><code>.captcha-checkbox</code></td><td>認証チェックボックス</td></tr>
+              <tr><td>CAPTCHA画像</td><td><code>.captcha-image</code></td><td>選択式画像（9枚）</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

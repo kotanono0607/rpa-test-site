@@ -22,6 +22,8 @@
           <li><a href="table.html" class="active">テーブル</a></li>
           <li><a href="popup.html">ポップアップ</a></li>
           <li><a href="dynamic.html">動的</a></li>
+          <li><a href="advanced.html">高度</a></li>
+          <li><a href="challenge.html">挑戦</a></li>
         </ul>
       </nav>
     </div>
@@ -36,13 +38,17 @@
       <div class="card">
         <div class="card-title">🛒 商品一覧</div>
         
-        <!-- 検索エリア -->
-        <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center;">
+        <!-- 検索・ダウンロードエリア -->
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;">
           <div class="form-group" style="margin: 0; flex: 1; max-width: 300px;">
             <input type="text" id="table-search" placeholder="商品名またはIDで検索..." onkeyup="テーブルを検索()">
           </div>
           <button class="btn btn-primary" onclick="テーブルを検索()">検索</button>
           <button class="btn btn-secondary" onclick="document.getElementById('table-search').value=''; テーブルを検索();">クリア</button>
+          <div style="margin-left: auto; display: flex; gap: 8px;">
+            <button class="export-btn" onclick="CSVをダウンロード()">📥 CSV</button>
+            <button class="export-btn" onclick="JSONをダウンロード()">📥 JSON</button>
+          </div>
         </div>
         
         <!-- テーブル -->
