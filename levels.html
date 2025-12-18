@@ -175,6 +175,96 @@
       font-size: 3rem;
       margin-bottom: 16px;
     }
+
+    /* 縦長レベル進捗バー */
+    .level-sidebar {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      border-radius: 30px;
+      padding: 16px 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    .level-sidebar-title {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 0.7rem;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+    .level-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.85rem;
+      color: var(--secondary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 3px solid transparent;
+    }
+    .level-dot:hover {
+      transform: scale(1.15);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .level-dot.cleared {
+      background: var(--success);
+      color: white;
+      border-color: #059669;
+    }
+    .level-dot.current {
+      background: var(--primary);
+      color: white;
+      border-color: #1d4ed8;
+      animation: pulse 2s infinite;
+    }
+    .level-dot.locked {
+      background: #e5e7eb;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+    .level-dot.locked:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); }
+    }
+    .level-sidebar-progress {
+      width: 8px;
+      height: 100px;
+      background: var(--border);
+      border-radius: 4px;
+      margin-top: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .level-sidebar-progress-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, var(--success), #34d399);
+      transition: height 0.5s ease;
+    }
+    .level-sidebar-percent {
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: var(--success);
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -230,6 +320,11 @@
       </div>
     </div>
   </main>
+
+  <!-- 縦長レベル進捗バー（右サイド） -->
+  <div class="level-sidebar" id="level-sidebar">
+    <!-- JavaScriptで生成 -->
+  </div>
 
   <footer>
     <p>RPA Test Site for UIpowershell - Created for automation testing</p>
@@ -643,12 +738,13 @@
               ? `<button class="btn btn-primary" onclick="startLevel(${currentLevel.id + 1})">次のレベルへ →</button>`
               : `<button class="btn btn-success" onclick="alert('おめでとう！全レベルクリア！')">🏆 全クリア！</button>`
             }
-            <button class="btn btn-secondary" onclick="renderLevelGrid(); resetArena();">レベル選択に戻る</button>
+            <button class="btn btn-secondary" onclick="renderLevelGrid(); renderSidebar(); resetArena();">レベル選択に戻る</button>
           </div>
         </div>
       `;
 
       renderLevelGrid();
+      renderSidebar();
     }
 
     // アリーナをリセット
@@ -667,13 +763,50 @@
         clearedLevels = [];
         localStorage.removeItem('rpa-cleared-levels');
         renderLevelGrid();
+        renderSidebar();
         resetArena();
         ログを追加('level-log', '進捗がリセットされました');
       }
     }
 
+    // サイドバー描画
+    function renderSidebar() {
+      const sidebar = document.getElementById('level-sidebar');
+      const clearedCount = clearedLevels.length;
+      const totalLevels = levels.length;
+      const percent = Math.round((clearedCount / totalLevels) * 100);
+
+      let html = '<div class="level-sidebar-title">LEVEL</div>';
+
+      levels.forEach((level, index) => {
+        const isCleared = clearedLevels.includes(level.id);
+        const isLocked = level.id > 1 && !clearedLevels.includes(level.id - 1);
+        const isCurrent = !isCleared && !isLocked;
+
+        let dotClass = 'level-dot';
+        if (isCleared) dotClass += ' cleared';
+        else if (isCurrent) dotClass += ' current';
+        else if (isLocked) dotClass += ' locked';
+
+        const icon = isCleared ? '✓' : level.id;
+
+        html += `<div class="${dotClass}" onclick="${isLocked ? '' : `startLevel(${level.id})`}" title="Lv.${level.id}: ${level.title}">${icon}</div>`;
+      });
+
+      // 進捗バー
+      html += `
+        <div class="level-sidebar-progress">
+          <div class="level-sidebar-progress-fill" style="height: ${percent}%"></div>
+        </div>
+        <div class="level-sidebar-percent">${percent}%</div>
+      `;
+
+      sidebar.innerHTML = html;
+    }
+
     // 初期化
     renderLevelGrid();
+    renderSidebar();
   </script>
 </body>
 </html>
