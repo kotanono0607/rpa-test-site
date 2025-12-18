@@ -90,6 +90,7 @@ nav a {
   border-radius: var(--radius);
   transition: var(--transition);
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 nav a:hover,
