@@ -176,39 +176,43 @@
       margin-bottom: 16px;
     }
 
-    /* 縦長レベル進捗バー */
+    /* 縦長レベル進捗バー（20レベル対応） */
     .level-sidebar {
       position: fixed;
-      right: 20px;
+      right: 12px;
       top: 50%;
       transform: translateY(-50%);
       background: white;
-      border-radius: 30px;
-      padding: 16px 12px;
+      border-radius: 20px;
+      padding: 12px 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.15);
       z-index: 1000;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 4px;
       align-items: center;
+      max-height: 90vh;
+      overflow-y: auto;
     }
+    .level-sidebar::-webkit-scrollbar { width: 0; }
     .level-dot {
-      width: 36px;
-      height: 36px;
+      width: 28px;
+      height: 28px;
+      min-height: 28px;
       border-radius: 50%;
       background: var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 0.85rem;
+      font-size: 0.7rem;
       color: var(--secondary);
       cursor: pointer;
-      transition: all 0.3s ease;
-      border: 3px solid transparent;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
     }
     .level-dot:hover {
-      transform: scale(1.15);
+      transform: scale(1.2);
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
     .level-dot.cleared {
@@ -325,79 +329,130 @@
 
   <script src="script.js"></script>
   <script>
-    // レベルデータ
+    // レベルデータ（20レベル）
     const levels = [
+      // ===== 入門（1-5） =====
       {
-        id: 1,
-        title: 'ボタンクリック',
+        id: 1, title: 'ボタンクリック', category: '入門',
         desc: 'ボタンをクリックしてみよう',
         mission: '「クリック！」ボタンをクリックしてください',
         type: 'click'
       },
       {
-        id: 2,
-        title: 'テキスト入力',
+        id: 2, title: 'テキスト入力', category: '入門',
         desc: '入力フィールドに文字を入力しよう',
         mission: '入力欄に「RPA」と入力してください',
-        type: 'input',
-        answer: 'RPA'
+        type: 'input', answer: 'RPA'
       },
       {
-        id: 3,
-        title: 'プルダウン選択',
+        id: 3, title: 'プルダウン選択', category: '入門',
         desc: 'セレクトボックスから選択しよう',
         mission: '「東京都」を選択してください',
-        type: 'select',
-        answer: 'tokyo'
+        type: 'select', answer: 'tokyo'
       },
       {
-        id: 4,
-        title: 'チェックボックス',
+        id: 4, title: 'チェックボックス', category: '入門',
         desc: 'チェックボックスをONにしよう',
         mission: '「同意する」にチェックを入れてください',
         type: 'checkbox'
       },
       {
-        id: 5,
-        title: 'ラジオボタン',
+        id: 5, title: 'ラジオボタン', category: '入門',
         desc: '選択肢から1つ選ぼう',
         mission: '「オプションB」を選択してください',
-        type: 'radio',
-        answer: 'b'
+        type: 'radio', answer: 'b'
       },
+      // ===== 基本（6-10） =====
       {
-        id: 6,
-        title: '連続クリック',
+        id: 6, title: '連続クリック', category: '基本',
         desc: '指定された順番でクリックしよう',
         mission: 'ボタンを1→2→3の順にクリックしてください',
         type: 'sequence'
       },
       {
-        id: 7,
-        title: 'フォーム入力',
-        desc: '複数のフィールドを入力しよう',
-        mission: '名前とメールアドレスを入力して送信してください',
-        type: 'form'
+        id: 7, title: 'キー入力', category: '基本',
+        desc: 'キーボードで入力しよう',
+        mission: 'Enterキーを押してください',
+        type: 'keyboard'
       },
       {
-        id: 8,
-        title: 'テーブル操作',
+        id: 8, title: 'テーブル行選択', category: '基本',
         desc: 'テーブルから特定の行を選択しよう',
         mission: '「りんご」の行の「選択」ボタンをクリックしてください',
-        type: 'table'
+        type: 'table', answer: 'りんご'
       },
       {
-        id: 9,
-        title: '待機して操作',
-        desc: '要素が表示されるまで待ってから操作しよう',
-        mission: 'ボタンが表示されたらクリックしてください（2秒後に表示）',
+        id: 9, title: 'アラート確認', category: '基本',
+        desc: 'アラートに対応しよう',
+        mission: 'ボタンを押してアラートのOKをクリックしてください',
+        type: 'alert'
+      },
+      {
+        id: 10, title: '確認ダイアログ', category: '基本',
+        desc: '確認ダイアログで「OK」を選ぼう',
+        mission: '確認ダイアログで「OK」をクリックしてください',
+        type: 'confirm'
+      },
+      // ===== 中級（11-15） =====
+      {
+        id: 11, title: '要素出現待ち', category: '中級',
+        desc: '要素が表示されるまで待とう',
+        mission: 'ボタンが表示されたらクリックしてください（3秒後）',
         type: 'wait'
       },
       {
-        id: 10,
-        title: '総合テスト',
-        desc: 'すべてのスキルを使おう',
-        mission: '入力→選択→チェック→送信の順に操作してください',
+        id: 12, title: '動的要素クリック', category: '中級',
+        desc: '動的に追加される要素を操作しよう',
+        mission: '「追加」ボタンを押して、出現した「ターゲット」をクリック',
+        type: 'dynamic'
+      },
+      {
+        id: 13, title: 'ページネーション', category: '中級',
+        desc: 'ページを移動して目的のデータを見つけよう',
+        mission: '2ページ目に移動して「オレンジ」を選択してください',
+        type: 'pagination', answer: 'オレンジ'
+      },
+      {
+        id: 14, title: 'フォーム複合入力', category: '中級',
+        desc: '複数の項目を正しく入力しよう',
+        mission: '名前、メール、電話番号を入力して送信',
+        type: 'form-multi'
+      },
+      {
+        id: 15, title: 'ドラッグ＆ドロップ', category: '中級',
+        desc: '要素をドラッグして移動しよう',
+        mission: '青いボックスを緑のエリアにドロップしてください',
+        type: 'drag-drop'
+      },
+      // ===== 上級（16-20） =====
+      {
+        id: 16, title: 'iframe内操作', category: '上級',
+        desc: 'iframe内の要素を操作しよう',
+        mission: 'iframe内のボタンをクリックしてください',
+        type: 'iframe'
+      },
+      {
+        id: 17, title: 'Shadow DOM', category: '上級',
+        desc: 'Shadow DOM内の要素を操作しよう',
+        mission: 'Shadow DOM内のボタンをクリックしてください',
+        type: 'shadow-dom'
+      },
+      {
+        id: 18, title: 'プロンプト入力', category: '上級',
+        desc: 'プロンプトに値を入力しよう',
+        mission: 'プロンプトに「完了」と入力してOKを押してください',
+        type: 'prompt', answer: '完了'
+      },
+      {
+        id: 19, title: '複合操作', category: '上級',
+        desc: '複数の操作を連続で行おう',
+        mission: '入力→選択→チェック→ボタンの順に操作してください',
+        type: 'complex'
+      },
+      {
+        id: 20, title: '総合テスト', category: '最終',
+        desc: 'すべてのスキルを駆使してクリアしよう',
+        mission: '5つの課題を順番にクリアしてください',
         type: 'final'
       }
     ];
@@ -442,187 +497,100 @@
 
     // レベルを開始
     function startLevel(levelId) {
-      const level = levels.find(l => l.id === levelId);
+      var level = levels.find(function(l) { return l.id === levelId; });
       if (!level) return;
 
       currentLevel = level;
-      ログを追加('level-log', `レベル${level.id}「${level.title}」を開始`);
+      sequenceProgress = 0;
+      ログを追加('level-log', 'レベル' + level.id + '「' + level.title + '」を開始');
 
-      const arena = document.getElementById('level-arena');
-      arena.innerHTML = `
-        <div class="level-header">
-          <h2><span class="level-badge">Level ${level.id}</span> ${level.title}</h2>
-          <button class="btn btn-secondary" onclick="renderLevelGrid(); resetArena();">戻る</button>
-        </div>
-        <div class="mission-box">
-          <h3>📋 ミッション</h3>
-          <p>${level.mission}</p>
-        </div>
-        <div class="level-content" id="level-content">
-          ${getLevelContent(level)}
-        </div>
-      `;
+      var arena = document.getElementById('level-arena');
+      arena.innerHTML = '<div class="level-header"><h2><span class="level-badge">Lv.' + level.id + '</span> ' + level.title + ' <span style="font-size:0.8rem;color:var(--secondary);">[' + level.category + ']</span></h2><button class="btn btn-secondary" onclick="renderLevelGrid(); renderSidebar(); resetArena();">戻る</button></div><div class="mission-box"><h3>📋 ミッション</h3><p>' + level.mission + '</p></div><div class="level-content" id="level-content">' + getLevelContent(level) + '</div>';
+
+      // ページネーションの初期化
+      if (level.type === 'pagination') {
+        setTimeout(function() { changePage(1); }, 100);
+      }
     }
 
     // レベルのコンテンツを生成
     function getLevelContent(level) {
       switch (level.type) {
         case 'click':
-          return `
-            <div style="text-align: center; padding: 40px;">
-              <button class="btn btn-primary" style="font-size: 1.5rem; padding: 20px 60px;"
-                      onclick="checkAnswer('click')">クリック！</button>
-            </div>
-          `;
+          return '<div style="text-align: center; padding: 40px;"><button class="btn btn-primary" style="font-size: 1.5rem; padding: 20px 60px;" onclick="checkAnswer(\'click\')">クリック！</button></div>';
 
         case 'input':
-          return `
-            <div style="max-width: 400px; margin: 0 auto; padding: 40px;">
-              <div class="form-group">
-                <label>テキストを入力:</label>
-                <input type="text" id="level-input" placeholder="ここに入力...">
-              </div>
-              <button class="btn btn-primary" onclick="checkAnswer('input')">確認</button>
-            </div>
-          `;
+          return '<div style="max-width: 400px; margin: 0 auto; padding: 40px;"><div class="form-group"><label>テキストを入力:</label><input type="text" id="level-input" placeholder="ここに入力..."></div><button class="btn btn-primary" onclick="checkAnswer(\'input\')">確認</button></div>';
 
         case 'select':
-          return `
-            <div style="max-width: 400px; margin: 0 auto; padding: 40px;">
-              <div class="form-group">
-                <label>都道府県を選択:</label>
-                <select id="level-select">
-                  <option value="">選択してください</option>
-                  <option value="hokkaido">北海道</option>
-                  <option value="tokyo">東京都</option>
-                  <option value="osaka">大阪府</option>
-                  <option value="fukuoka">福岡県</option>
-                </select>
-              </div>
-              <button class="btn btn-primary" onclick="checkAnswer('select')">確認</button>
-            </div>
-          `;
+          return '<div style="max-width: 400px; margin: 0 auto; padding: 40px;"><div class="form-group"><label>都道府県を選択:</label><select id="level-select"><option value="">選択してください</option><option value="hokkaido">北海道</option><option value="tokyo">東京都</option><option value="osaka">大阪府</option><option value="fukuoka">福岡県</option></select></div><button class="btn btn-primary" onclick="checkAnswer(\'select\')">確認</button></div>';
 
         case 'checkbox':
-          return `
-            <div style="max-width: 400px; margin: 0 auto; padding: 40px;">
-              <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                  <input type="checkbox" id="level-checkbox" style="width: 24px; height: 24px;">
-                  <span style="font-size: 1.1rem;">同意する</span>
-                </label>
-              </div>
-              <button class="btn btn-primary" onclick="checkAnswer('checkbox')">確認</button>
-            </div>
-          `;
+          return '<div style="max-width: 400px; margin: 0 auto; padding: 40px;"><div class="form-group"><label style="display: flex; align-items: center; gap: 12px; cursor: pointer;"><input type="checkbox" id="level-checkbox" style="width: 24px; height: 24px;"><span style="font-size: 1.1rem;">同意する</span></label></div><button class="btn btn-primary" onclick="checkAnswer(\'checkbox\')">確認</button></div>';
 
         case 'radio':
-          return `
-            <div style="max-width: 400px; margin: 0 auto; padding: 40px;">
-              <div class="form-group">
-                <label>オプションを選択:</label>
-                <div class="radio-group" style="margin-top: 12px;">
-                  <label style="display: block; margin: 8px 0; cursor: pointer;">
-                    <input type="radio" name="level-radio" value="a"> オプションA
-                  </label>
-                  <label style="display: block; margin: 8px 0; cursor: pointer;">
-                    <input type="radio" name="level-radio" value="b"> オプションB
-                  </label>
-                  <label style="display: block; margin: 8px 0; cursor: pointer;">
-                    <input type="radio" name="level-radio" value="c"> オプションC
-                  </label>
-                </div>
-              </div>
-              <button class="btn btn-primary" onclick="checkAnswer('radio')">確認</button>
-            </div>
-          `;
+          return '<div style="max-width: 400px; margin: 0 auto; padding: 40px;"><div class="form-group"><label>オプションを選択:</label><div class="radio-group" style="margin-top: 12px;"><label style="display: block; margin: 8px 0; cursor: pointer;"><input type="radio" name="level-radio" value="a"> オプションA</label><label style="display: block; margin: 8px 0; cursor: pointer;"><input type="radio" name="level-radio" value="b"> オプションB</label><label style="display: block; margin: 8px 0; cursor: pointer;"><input type="radio" name="level-radio" value="c"> オプションC</label></div></div><button class="btn btn-primary" onclick="checkAnswer(\'radio\')">確認</button></div>';
 
         case 'sequence':
-          return `
-            <div style="text-align: center; padding: 40px;">
-              <p style="margin-bottom: 20px;">進捗: <span id="seq-progress">0</span>/3</p>
-              <div style="display: flex; gap: 16px; justify-content: center;">
-                <button class="btn btn-secondary" style="font-size: 1.3rem; padding: 15px 30px;"
-                        onclick="checkSequence(1)" id="seq-btn-1">1</button>
-                <button class="btn btn-secondary" style="font-size: 1.3rem; padding: 15px 30px;"
-                        onclick="checkSequence(2)" id="seq-btn-2">2</button>
-                <button class="btn btn-secondary" style="font-size: 1.3rem; padding: 15px 30px;"
-                        onclick="checkSequence(3)" id="seq-btn-3">3</button>
-              </div>
-            </div>
-          `;
+          return '<div style="text-align: center; padding: 40px;"><p style="margin-bottom: 20px;">進捗: <span id="seq-progress">0</span>/3</p><div style="display: flex; gap: 16px; justify-content: center;"><button class="btn btn-secondary" style="font-size: 1.3rem; padding: 15px 30px;" onclick="checkSequence(1)" id="seq-btn-1">1</button><button class="btn btn-secondary" style="font-size: 1.3rem; padding: 15px 30px;" onclick="checkSequence(2)" id="seq-btn-2">2</button><button class="btn btn-secondary" style="font-size: 1.3rem; padding: 15px 30px;" onclick="checkSequence(3)" id="seq-btn-3">3</button></div></div>';
 
-        case 'form':
-          return `
-            <div style="max-width: 400px; margin: 0 auto; padding: 20px;">
-              <div class="form-group">
-                <label>名前:</label>
-                <input type="text" id="form-name" placeholder="名前を入力">
-              </div>
-              <div class="form-group">
-                <label>メールアドレス:</label>
-                <input type="email" id="form-email" placeholder="メールを入力">
-              </div>
-              <button class="btn btn-primary" onclick="checkAnswer('form')">送信</button>
-            </div>
-          `;
+        case 'keyboard':
+          setTimeout(function() {
+            var input = document.getElementById('keyboard-input');
+            if (input) {
+              input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') { checkAnswer('keyboard'); }
+              });
+            }
+          }, 100);
+          return '<div style="text-align: center; padding: 40px;"><p style="margin-bottom: 20px;">下の入力欄をクリックしてからEnterキーを押してください</p><input type="text" id="keyboard-input" style="padding: 12px; font-size: 1rem; width: 300px;" placeholder="ここをクリックしてEnter"></div>';
 
         case 'table':
-          return `
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr><th>ID</th><th>商品名</th><th>操作</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>001</td><td>りんご</td><td><button class="btn btn-primary" onclick="checkAnswer('table', 'りんご')">選択</button></td></tr>
-                  <tr><td>002</td><td>みかん</td><td><button class="btn btn-secondary" onclick="checkAnswer('table', 'みかん')">選択</button></td></tr>
-                  <tr><td>003</td><td>ぶどう</td><td><button class="btn btn-secondary" onclick="checkAnswer('table', 'ぶどう')">選択</button></td></tr>
-                </tbody>
-              </table>
-            </div>
-          `;
+          return '<div class="table-container"><table><thead><tr><th>ID</th><th>商品名</th><th>操作</th></tr></thead><tbody><tr><td>001</td><td>りんご</td><td><button class="btn btn-primary" onclick="checkAnswer(\'table\', \'りんご\')">選択</button></td></tr><tr><td>002</td><td>みかん</td><td><button class="btn btn-secondary" onclick="checkAnswer(\'table\', \'みかん\')">選択</button></td></tr><tr><td>003</td><td>ぶどう</td><td><button class="btn btn-secondary" onclick="checkAnswer(\'table\', \'ぶどう\')">選択</button></td></tr></tbody></table></div>';
+
+        case 'alert':
+          return '<div style="text-align: center; padding: 40px;"><p style="margin-bottom: 20px;">ボタンを押すとアラートが表示されます。OKを押してください。</p><button class="btn btn-primary" style="font-size: 1.2rem;" onclick="showAlertChallenge()">アラートを表示</button></div>';
+
+        case 'confirm':
+          return '<div style="text-align: center; padding: 40px;"><p style="margin-bottom: 20px;">確認ダイアログで「OK」を選んでください。</p><button class="btn btn-primary" style="font-size: 1.2rem;" onclick="showConfirmChallenge()">確認ダイアログを表示</button></div>';
 
         case 'wait':
-          setTimeout(() => {
-            const container = document.getElementById('wait-btn-container');
-            if (container) {
-              container.innerHTML = '<button class="btn btn-success" style="font-size: 1.2rem;" onclick="checkAnswer(\'wait\')">今だ！クリック！</button>';
-            }
-          }, 2000);
-          return `
-            <div style="text-align: center; padding: 40px;">
-              <p style="margin-bottom: 20px;">ボタンが表示されるまで待ってください...</p>
-              <div id="wait-btn-container">
-                <div class="spinner"></div>
-              </div>
-            </div>
-          `;
+          setTimeout(function() {
+            var container = document.getElementById('wait-btn-container');
+            if (container) { container.innerHTML = '<button class="btn btn-success" style="font-size: 1.2rem;" onclick="checkAnswer(\'wait\')">今だ！クリック！</button>'; }
+          }, 3000);
+          return '<div style="text-align: center; padding: 40px;"><p style="margin-bottom: 20px;">ボタンが表示されるまで待ってください...</p><div id="wait-btn-container"><div class="spinner"></div></div></div>';
+
+        case 'dynamic':
+          return '<div style="text-align: center; padding: 40px;"><p style="margin-bottom: 20px;">「追加」を押すと新しいボタンが出現します</p><button class="btn btn-primary" onclick="addDynamicTarget()">追加</button><div id="dynamic-container" style="margin-top: 30px;"></div></div>';
+
+        case 'pagination':
+          paginationPage = 1;
+          return '<div style="padding: 20px;"><div id="pagination-table"></div><div style="text-align: center; margin-top: 16px;"><button class="btn btn-secondary" onclick="changePage(1)" id="page-btn-1">1</button> <button class="btn btn-secondary" onclick="changePage(2)" id="page-btn-2">2</button></div></div>';
+
+        case 'form-multi':
+          return '<div style="max-width: 400px; margin: 0 auto; padding: 20px;"><div class="form-group"><label>名前:</label><input type="text" id="multi-name" placeholder="名前を入力"></div><div class="form-group"><label>メールアドレス:</label><input type="email" id="multi-email" placeholder="example@test.com"></div><div class="form-group"><label>電話番号:</label><input type="tel" id="multi-phone" placeholder="090-1234-5678"></div><button class="btn btn-primary" onclick="checkAnswer(\'form-multi\')">送信</button></div>';
+
+        case 'drag-drop':
+          setTimeout(initDragDrop, 100);
+          return '<div style="padding: 40px;"><div style="display: flex; gap: 60px; justify-content: center; align-items: center;"><div id="drag-source" draggable="true" style="width: 80px; height: 80px; background: var(--primary); border-radius: 8px; cursor: grab; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">ドラッグ</div><div id="drop-target" style="width: 150px; height: 150px; border: 3px dashed var(--success); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--secondary);">ここにドロップ</div></div></div>';
+
+        case 'iframe':
+          return '<div style="padding: 20px; text-align: center;"><p style="margin-bottom: 16px;">iframe内のボタンをクリックしてください</p><iframe id="level-iframe" srcdoc="<html><body style=\'text-align:center;padding:40px;font-family:sans-serif;\'><button onclick=\'parent.checkAnswer(\"iframe\")\' style=\'padding:16px 32px;font-size:1.2rem;background:#2563eb;color:white;border:none;border-radius:8px;cursor:pointer;\'>iframe内ボタン</button></body></html>" style="width: 100%; height: 200px; border: 2px solid var(--border); border-radius: 8px;"></iframe></div>';
+
+        case 'shadow-dom':
+          setTimeout(initShadowDOM, 100);
+          return '<div style="padding: 40px; text-align: center;"><p style="margin-bottom: 20px;">Shadow DOM内のボタンをクリックしてください</p><div id="shadow-host"></div></div>';
+
+        case 'prompt':
+          return '<div style="text-align: center; padding: 40px;"><p style="margin-bottom: 20px;">プロンプトに「完了」と入力してください</p><button class="btn btn-primary" style="font-size: 1.2rem;" onclick="showPromptChallenge()">プロンプトを表示</button></div>';
+
+        case 'complex':
+          return '<div style="max-width: 500px; margin: 0 auto; padding: 20px;"><div class="form-group"><label>1. テキストを入力:</label><input type="text" id="complex-input" placeholder="何か入力"></div><div class="form-group"><label>2. 選択:</label><select id="complex-select"><option value="">選択してください</option><option value="ok">OK</option></select></div><div class="form-group"><label style="display: flex; align-items: center; gap: 12px; cursor: pointer;"><input type="checkbox" id="complex-check"><span>3. 確認</span></label></div><button class="btn btn-primary" onclick="checkAnswer(\'complex\')">4. 送信</button></div>';
 
         case 'final':
-          return `
-            <div style="max-width: 500px; margin: 0 auto; padding: 20px;">
-              <div class="form-group">
-                <label>1. 名前を入力:</label>
-                <input type="text" id="final-name" placeholder="名前">
-              </div>
-              <div class="form-group">
-                <label>2. カテゴリを選択:</label>
-                <select id="final-select">
-                  <option value="">選択してください</option>
-                  <option value="a">カテゴリA</option>
-                  <option value="b">カテゴリB</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                  <input type="checkbox" id="final-check">
-                  <span>3. 確認しました</span>
-                </label>
-              </div>
-              <button class="btn btn-primary" onclick="checkAnswer('final')">4. 送信</button>
-            </div>
-          `;
+          finalStep = 0;
+          return '<div style="padding: 20px;"><div id="final-challenge" style="text-align: center;"><p>5つの課題をクリアしてください</p><p style="margin: 20px 0;">進捗: <span id="final-progress">0</span>/5</p><button class="btn btn-primary" onclick="startFinalStep()">開始</button></div></div>';
 
         default:
           return '<p>Coming soon...</p>';
@@ -631,53 +599,72 @@
 
     // 回答をチェック
     let sequenceProgress = 0;
+    let paginationPage = 1;
+    let finalStep = 0;
 
     function checkAnswer(type, extra) {
       let success = false;
 
       switch (type) {
         case 'click':
+        case 'keyboard':
+        case 'wait':
+        case 'iframe':
+        case 'shadow-dom':
+        case 'dynamic':
           success = true;
           break;
 
         case 'input':
-          const inputVal = document.getElementById('level-input').value;
-          success = inputVal.toUpperCase() === currentLevel.answer;
+          var inputVal = document.getElementById('level-input');
+          success = inputVal && inputVal.value.toUpperCase() === currentLevel.answer;
           break;
 
         case 'select':
-          const selectVal = document.getElementById('level-select').value;
-          success = selectVal === currentLevel.answer;
+          var selectVal = document.getElementById('level-select');
+          success = selectVal && selectVal.value === currentLevel.answer;
           break;
 
         case 'checkbox':
-          success = document.getElementById('level-checkbox').checked;
+          var cb = document.getElementById('level-checkbox');
+          success = cb && cb.checked;
           break;
 
         case 'radio':
-          const radioVal = document.querySelector('input[name="level-radio"]:checked')?.value;
-          success = radioVal === currentLevel.answer;
-          break;
-
-        case 'form':
-          const name = document.getElementById('form-name').value;
-          const email = document.getElementById('form-email').value;
-          success = name.length > 0 && email.includes('@');
+          var radioEl = document.querySelector('input[name="level-radio"]:checked');
+          success = radioEl && radioEl.value === currentLevel.answer;
           break;
 
         case 'table':
-          success = extra === 'りんご';
+          success = extra === currentLevel.answer;
           break;
 
-        case 'wait':
+        case 'pagination':
+          success = extra === currentLevel.answer;
+          break;
+
+        case 'form-multi':
+          var mName = document.getElementById('multi-name');
+          var mEmail = document.getElementById('multi-email');
+          var mPhone = document.getElementById('multi-phone');
+          success = mName && mName.value.length > 0 && mEmail && mEmail.value.includes('@') && mPhone && mPhone.value.length > 5;
+          break;
+
+        case 'complex':
+          var cInput = document.getElementById('complex-input');
+          var cSelect = document.getElementById('complex-select');
+          var cCheck = document.getElementById('complex-check');
+          success = cInput && cInput.value.length > 0 && cSelect && cSelect.value && cCheck && cCheck.checked;
+          break;
+
+        case 'alert':
+        case 'confirm':
+        case 'prompt':
           success = true;
           break;
 
         case 'final':
-          const fName = document.getElementById('final-name').value;
-          const fSelect = document.getElementById('final-select').value;
-          const fCheck = document.getElementById('final-check').checked;
-          success = fName.length > 0 && fSelect && fCheck;
+          success = true;
           break;
       }
 
@@ -690,26 +677,160 @@
     }
 
     function checkSequence(num) {
-      const expected = sequenceProgress + 1;
+      var expected = sequenceProgress + 1;
       if (num === expected) {
         sequenceProgress++;
         document.getElementById('seq-progress').textContent = sequenceProgress;
-        document.getElementById(`seq-btn-${num}`).classList.add('btn-success');
-        document.getElementById(`seq-btn-${num}`).classList.remove('btn-secondary');
-
+        document.getElementById('seq-btn-' + num).classList.add('btn-success');
+        document.getElementById('seq-btn-' + num).classList.remove('btn-secondary');
         if (sequenceProgress === 3) {
-          setTimeout(() => clearLevel(), 300);
+          setTimeout(function() { clearLevel(); }, 300);
         }
       } else {
         sequenceProgress = 0;
         document.getElementById('seq-progress').textContent = '0';
-        [1, 2, 3].forEach(n => {
-          document.getElementById(`seq-btn-${n}`).classList.remove('btn-success');
-          document.getElementById(`seq-btn-${n}`).classList.add('btn-secondary');
+        [1, 2, 3].forEach(function(n) {
+          document.getElementById('seq-btn-' + n).classList.remove('btn-success');
+          document.getElementById('seq-btn-' + n).classList.add('btn-secondary');
         });
         ログを追加('level-log', '❌ 順番が違います。1からやり直してください。');
       }
     }
+
+    // アラートチャレンジ
+    function showAlertChallenge() {
+      alert('これはアラートです。OKを押してください。');
+      checkAnswer('alert');
+    }
+
+    // 確認ダイアログチャレンジ
+    function showConfirmChallenge() {
+      var result = confirm('OKを押してください。キャンセルを押すと失敗です。');
+      if (result) {
+        checkAnswer('confirm');
+      } else {
+        ログを追加('level-log', '❌ キャンセルが押されました。');
+      }
+    }
+
+    // プロンプトチャレンジ
+    function showPromptChallenge() {
+      var result = prompt('「完了」と入力してください:');
+      if (result === currentLevel.answer) {
+        checkAnswer('prompt');
+      } else {
+        ログを追加('level-log', '❌ 入力が違います。「完了」と入力してください。');
+        alert('入力が違います。もう一度試してください。');
+      }
+    }
+
+    // 動的要素追加
+    function addDynamicTarget() {
+      var container = document.getElementById('dynamic-container');
+      if (container) {
+        container.innerHTML = '<button class="btn btn-success" style="font-size: 1.2rem;" onclick="checkAnswer(\'dynamic\')">ターゲット</button>';
+      }
+    }
+
+    // ページネーション
+    var paginationData = {
+      1: [{ name: 'りんご' }, { name: 'みかん' }, { name: 'バナナ' }],
+      2: [{ name: 'ぶどう' }, { name: 'オレンジ' }, { name: 'いちご' }]
+    };
+
+    function changePage(page) {
+      paginationPage = page;
+      document.getElementById('page-btn-1').classList.toggle('btn-primary', page === 1);
+      document.getElementById('page-btn-1').classList.toggle('btn-secondary', page !== 1);
+      document.getElementById('page-btn-2').classList.toggle('btn-primary', page === 2);
+      document.getElementById('page-btn-2').classList.toggle('btn-secondary', page !== 2);
+      renderPaginationTable();
+    }
+
+    function renderPaginationTable() {
+      var data = paginationData[paginationPage];
+      var html = '<table><thead><tr><th>No</th><th>商品名</th><th>操作</th></tr></thead><tbody>';
+      data.forEach(function(item, i) {
+        html += '<tr><td>' + (i + 1) + '</td><td>' + item.name + '</td><td><button class="btn btn-secondary" onclick="checkAnswer(\'pagination\', \'' + item.name + '\')">選択</button></td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('pagination-table').innerHTML = html;
+    }
+
+    // ドラッグ＆ドロップ初期化
+    function initDragDrop() {
+      var source = document.getElementById('drag-source');
+      var target = document.getElementById('drop-target');
+      if (!source || !target) return;
+
+      source.addEventListener('dragstart', function(e) {
+        e.dataTransfer.setData('text', 'drag');
+        source.style.opacity = '0.5';
+      });
+      source.addEventListener('dragend', function() {
+        source.style.opacity = '1';
+      });
+      target.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        target.style.borderColor = '#059669';
+        target.style.background = 'rgba(16, 185, 129, 0.1)';
+      });
+      target.addEventListener('dragleave', function() {
+        target.style.borderColor = 'var(--success)';
+        target.style.background = 'transparent';
+      });
+      target.addEventListener('drop', function(e) {
+        e.preventDefault();
+        target.innerHTML = '<div style="color: var(--success); font-weight: bold;">ドロップ成功！</div>';
+        setTimeout(function() { checkAnswer('drag-drop'); }, 500);
+      });
+    }
+
+    // Shadow DOM初期化
+    function initShadowDOM() {
+      var host = document.getElementById('shadow-host');
+      if (!host || host.shadowRoot) return;
+      var shadow = host.attachShadow({ mode: 'open' });
+      shadow.innerHTML = '<style>button { padding: 16px 32px; font-size: 1.2rem; background: #7c3aed; color: white; border: none; border-radius: 8px; cursor: pointer; } button:hover { background: #6d28d9; }</style><button id="shadow-btn">Shadow DOMボタン</button>';
+      shadow.getElementById('shadow-btn').addEventListener('click', function() {
+        checkAnswer('shadow-dom');
+      });
+    }
+
+    // 総合テスト
+    var finalSteps = ['click', 'input', 'select', 'checkbox', 'confirm'];
+    function startFinalStep() {
+      var container = document.getElementById('final-challenge');
+      if (finalStep >= finalSteps.length) {
+        checkAnswer('final');
+        return;
+      }
+      var step = finalSteps[finalStep];
+      var html = '<p>課題 ' + (finalStep + 1) + '/5</p>';
+      switch (step) {
+        case 'click':
+          html += '<button class="btn btn-primary" onclick="completeFinalStep()">クリック</button>';
+          break;
+        case 'input':
+          html += '<input type="text" id="final-input" placeholder="何か入力"><button class="btn btn-primary" onclick="checkFinalInput()">確認</button>';
+          break;
+        case 'select':
+          html += '<select id="final-sel"><option value="">選択</option><option value="ok">OK</option></select><button class="btn btn-primary" onclick="checkFinalSelect()">確認</button>';
+          break;
+        case 'checkbox':
+          html += '<label><input type="checkbox" id="final-cb"> チェック</label><button class="btn btn-primary" onclick="checkFinalCheckbox()">確認</button>';
+          break;
+        case 'confirm':
+          html += '<button class="btn btn-primary" onclick="checkFinalConfirm()">確認ダイアログ</button>';
+          break;
+      }
+      container.innerHTML = html;
+    }
+    function completeFinalStep() { finalStep++; document.getElementById('final-progress').textContent = finalStep; startFinalStep(); }
+    function checkFinalInput() { var v = document.getElementById('final-input'); if (v && v.value.length > 0) completeFinalStep(); else alert('入力してください'); }
+    function checkFinalSelect() { var v = document.getElementById('final-sel'); if (v && v.value) completeFinalStep(); else alert('選択してください'); }
+    function checkFinalCheckbox() { var v = document.getElementById('final-cb'); if (v && v.checked) completeFinalStep(); else alert('チェックしてください'); }
+    function checkFinalConfirm() { if (confirm('OKを押してください')) completeFinalStep(); }
 
     // レベルクリア
     function clearLevel() {
