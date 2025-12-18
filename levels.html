@@ -192,13 +192,6 @@
       gap: 8px;
       align-items: center;
     }
-    .level-sidebar-title {
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
-      font-size: 0.7rem;
-      color: var(--secondary);
-      margin-bottom: 8px;
-    }
     .level-dot {
       width: 36px;
       height: 36px;
@@ -772,34 +765,37 @@
     // サイドバー描画
     function renderSidebar() {
       const sidebar = document.getElementById('level-sidebar');
+      if (!sidebar) return;
+
       const clearedCount = clearedLevels.length;
       const totalLevels = levels.length;
       const percent = Math.round((clearedCount / totalLevels) * 100);
 
-      let html = '<div class="level-sidebar-title">LEVEL</div>';
+      let html = '';
 
-      levels.forEach((level, index) => {
+      // レベルドット（1〜10）
+      levels.forEach((level) => {
         const isCleared = clearedLevels.includes(level.id);
         const isLocked = level.id > 1 && !clearedLevels.includes(level.id - 1);
-        const isCurrent = !isCleared && !isLocked;
 
         let dotClass = 'level-dot';
-        if (isCleared) dotClass += ' cleared';
-        else if (isCurrent) dotClass += ' current';
-        else if (isLocked) dotClass += ' locked';
+        if (isCleared) {
+          dotClass += ' cleared';
+        } else if (isLocked) {
+          dotClass += ' locked';
+        } else {
+          dotClass += ' current';
+        }
 
         const icon = isCleared ? '✓' : level.id;
+        const clickHandler = isLocked ? '' : 'startLevel(' + level.id + ')';
 
-        html += `<div class="${dotClass}" onclick="${isLocked ? '' : `startLevel(${level.id})`}" title="Lv.${level.id}: ${level.title}">${icon}</div>`;
+        html += '<div class="' + dotClass + '" onclick="' + clickHandler + '" title="Lv.' + level.id + ': ' + level.title + '">' + icon + '</div>';
       });
 
       // 進捗バー
-      html += `
-        <div class="level-sidebar-progress">
-          <div class="level-sidebar-progress-fill" style="height: ${percent}%"></div>
-        </div>
-        <div class="level-sidebar-percent">${percent}%</div>
-      `;
+      html += '<div class="level-sidebar-progress"><div class="level-sidebar-progress-fill" style="height: ' + percent + '%"></div></div>';
+      html += '<div class="level-sidebar-percent">' + percent + '%</div>';
 
       sidebar.innerHTML = html;
     }
