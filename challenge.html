@@ -1,0 +1,399 @@
+<!-- challenge.html - チャレンジモードページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>チャレンジモード - RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    .challenge-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .challenge-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    }
+    .challenge-card h3 {
+      margin-bottom: 8px;
+      font-size: 1.3rem;
+    }
+    .challenge-card .time-limit {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      display: inline-block;
+      margin-top: 8px;
+    }
+    .challenge-area {
+      min-height: 400px;
+      border: 3px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .challenge-area.active {
+      border-color: var(--primary);
+      border-style: solid;
+    }
+    .click-targets {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .click-target {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .click-target:hover {
+      transform: scale(1.1);
+    }
+    .click-target.clicked {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .click-target.target-a { background: linear-gradient(135deg, #ff6b6b, #ee5a5a); }
+    .click-target.target-b { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+    .click-target.target-c { background: linear-gradient(135deg, #45b7d1, #2980b9); }
+    .click-target.target-d { background: linear-gradient(135deg, #96e6a1, #66bb6a); }
+    .click-target.target-e { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .quick-form {
+      width: 100%;
+      max-width: 400px;
+    }
+    .quick-form input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .leaderboard {
+      background: var(--light);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .leaderboard-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="form.html">入力フォーム</a></li>
+          <li><a href="click.html">クリック</a></li>
+          <li><a href="keyboard.html">キーボード</a></li>
+          <li><a href="wait.html">待機</a></li>
+          <li><a href="table.html">テーブル</a></li>
+          <li><a href="popup.html">ポップアップ</a></li>
+          <li><a href="dynamic.html">動的</a></li>
+          <li><a href="advanced.html">高度</a></li>
+          <li><a href="challenge.html" class="active">挑戦</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">🏆 チャレンジモード</h1>
+      <p class="page-description">制限時間内にミッションをクリアしよう！RPAスキルを試す絶好の機会です。</p>
+
+      <!-- チャレンジバナー（実行中に表示） -->
+      <div id="challenge-banner" class="challenge-banner hidden">
+        <div>
+          <strong>ミッション:</strong>
+          <span id="challenge-mission"></span>
+        </div>
+        <div class="challenge-timer" id="challenge-timer">--秒</div>
+      </div>
+
+      <!-- チャレンジ結果 -->
+      <div id="challenge-result" class="hidden"></div>
+
+      <div class="grid-2">
+        <!-- チャレンジ一覧 -->
+        <div>
+          <h2 style="margin-bottom: 16px;">📋 チャレンジ一覧</h2>
+
+          <div class="challenge-card" onclick="スピードクリックチャレンジ開始()">
+            <h3>⚡ スピードクリック</h3>
+            <p>A → B → C → D → E の順番でクリック</p>
+            <span class="time-limit">⏱️ 制限時間: 5秒</span>
+          </div>
+
+          <div class="challenge-card" onclick="入力チャレンジ開始()">
+            <h3>⌨️ 高速入力</h3>
+            <p>名前とメールアドレスを入力して送信</p>
+            <span class="time-limit">⏱️ 制限時間: 10秒</span>
+          </div>
+
+          <div class="challenge-card" onclick="計算チャレンジ開始()">
+            <h3>🧮 計算チャレンジ</h3>
+            <p>表示された計算問題の答えを入力</p>
+            <span class="time-limit">⏱️ 制限時間: 15秒</span>
+          </div>
+
+          <div class="challenge-card" onclick="連続クリックチャレンジ開始()">
+            <h3>🖱️ 連続クリック</h3>
+            <p>10秒間でできるだけ多くクリック</p>
+            <span class="time-limit">⏱️ 制限時間: 10秒</span>
+          </div>
+        </div>
+
+        <!-- チャレンジエリア -->
+        <div>
+          <h2 style="margin-bottom: 16px;">🎮 チャレンジエリア</h2>
+          <div id="challenge-area" class="challenge-area">
+            <p style="color: var(--secondary); font-size: 1.2rem;">左からチャレンジを選択してください</p>
+          </div>
+
+          <!-- スコアボード -->
+          <div class="card" style="margin-top: 24px;">
+            <div class="card-title">🏅 ベストスコア</div>
+            <div class="leaderboard">
+              <div class="leaderboard-item">
+                <span>スピードクリック</span>
+                <span id="score-speed">--</span>
+              </div>
+              <div class="leaderboard-item">
+                <span>高速入力</span>
+                <span id="score-input">--</span>
+              </div>
+              <div class="leaderboard-item">
+                <span>計算チャレンジ</span>
+                <span id="score-calc">--</span>
+              </div>
+              <div class="leaderboard-item">
+                <span>連続クリック</span>
+                <span id="score-click">--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 操作ログ -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">📜 操作ログ</div>
+        <div id="challenge-log" class="log-area">
+          <div class="log-entry"><span class="log-time">[--:--:--]</span>チャレンジモードへようこそ！</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    let challengeTimer = null;
+    let challengeTimeLeft = 0;
+    let clickSequence = [];
+    let clickCount = 0;
+    let calcAnswer = 0;
+
+    function updateTimer() {
+      document.getElementById('challenge-timer').textContent = challengeTimeLeft + '秒';
+    }
+
+    function showBanner(mission, time) {
+      document.getElementById('challenge-banner').classList.remove('hidden');
+      document.getElementById('challenge-mission').textContent = mission;
+      document.getElementById('challenge-result').classList.add('hidden');
+      challengeTimeLeft = time;
+      updateTimer();
+
+      challengeTimer = setInterval(() => {
+        challengeTimeLeft--;
+        updateTimer();
+        if (challengeTimeLeft <= 0) {
+          チャレンジ失敗();
+        }
+      }, 1000);
+    }
+
+    function hideBanner() {
+      document.getElementById('challenge-banner').classList.add('hidden');
+      clearInterval(challengeTimer);
+    }
+
+    function showResult(success, message) {
+      hideBanner();
+      const result = document.getElementById('challenge-result');
+      result.classList.remove('hidden');
+      result.className = 'challenge-result ' + (success ? 'success' : 'failure');
+      result.innerHTML = success
+        ? `<h2>🎉 成功！</h2><p>${message}</p>`
+        : `<h2>😢 失敗</h2><p>${message}</p>`;
+      ログを追加('challenge-log', success ? '✅ チャレンジ成功: ' + message : '❌ チャレンジ失敗: ' + message);
+    }
+
+    function チャレンジ失敗() {
+      showResult(false, 'タイムオーバー！');
+    }
+
+    // スピードクリックチャレンジ
+    function スピードクリックチャレンジ開始() {
+      clickSequence = [];
+      const area = document.getElementById('challenge-area');
+      area.classList.add('active');
+      area.innerHTML = `
+        <p style="margin-bottom: 20px; font-size: 1.1rem;">A → B → C → D → E の順にクリック！</p>
+        <div class="click-targets">
+          <div class="click-target target-a" onclick="クリック順序チェック('A', this)">A</div>
+          <div class="click-target target-b" onclick="クリック順序チェック('B', this)">B</div>
+          <div class="click-target target-c" onclick="クリック順序チェック('C', this)">C</div>
+          <div class="click-target target-d" onclick="クリック順序チェック('D', this)">D</div>
+          <div class="click-target target-e" onclick="クリック順序チェック('E', this)">E</div>
+        </div>
+      `;
+      showBanner('A→B→C→D→Eの順にクリック', 5);
+      ログを追加('challenge-log', '🎯 スピードクリックチャレンジ開始');
+    }
+
+    function クリック順序チェック(letter, element) {
+      const expected = ['A', 'B', 'C', 'D', 'E'];
+      if (letter === expected[clickSequence.length]) {
+        clickSequence.push(letter);
+        element.classList.add('clicked');
+        if (clickSequence.length === 5) {
+          const time = 5 - challengeTimeLeft;
+          showResult(true, `${time}秒でクリア！`);
+          document.getElementById('score-speed').textContent = time + '秒';
+        }
+      } else {
+        showResult(false, '順番が違います！');
+      }
+    }
+
+    // 入力チャレンジ
+    function 入力チャレンジ開始() {
+      const area = document.getElementById('challenge-area');
+      area.classList.add('active');
+      area.innerHTML = `
+        <div class="quick-form">
+          <p style="margin-bottom: 16px; text-align: center;">名前とメールを入力して送信！</p>
+          <input type="text" id="quick-name" placeholder="名前">
+          <input type="email" id="quick-email" placeholder="メールアドレス">
+          <button class="btn btn-primary" style="width: 100%;" onclick="入力チャレンジ送信()">送信</button>
+        </div>
+      `;
+      showBanner('名前とメールを入力して送信', 10);
+      ログを追加('challenge-log', '⌨️ 入力チャレンジ開始');
+      document.getElementById('quick-name').focus();
+    }
+
+    function 入力チャレンジ送信() {
+      const name = document.getElementById('quick-name').value;
+      const email = document.getElementById('quick-email').value;
+      if (name && email && email.includes('@')) {
+        const time = 10 - challengeTimeLeft;
+        showResult(true, `${time}秒でクリア！`);
+        document.getElementById('score-input').textContent = time + '秒';
+      } else {
+        showResult(false, '名前と有効なメールアドレスを入力してください');
+      }
+    }
+
+    // 計算チャレンジ
+    function 計算チャレンジ開始() {
+      const a = Math.floor(Math.random() * 50) + 10;
+      const b = Math.floor(Math.random() * 50) + 10;
+      calcAnswer = a + b;
+
+      const area = document.getElementById('challenge-area');
+      area.classList.add('active');
+      area.innerHTML = `
+        <div class="quick-form" style="text-align: center;">
+          <p style="font-size: 2rem; margin-bottom: 20px;">${a} + ${b} = ?</p>
+          <input type="number" id="calc-answer" placeholder="答えを入力" style="text-align: center; font-size: 1.5rem;">
+          <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="計算チャレンジ回答()">回答</button>
+        </div>
+      `;
+      showBanner(`${a} + ${b} の答えを入力`, 15);
+      ログを追加('challenge-log', '🧮 計算チャレンジ開始');
+      document.getElementById('calc-answer').focus();
+    }
+
+    function 計算チャレンジ回答() {
+      const answer = parseInt(document.getElementById('calc-answer').value);
+      if (answer === calcAnswer) {
+        const time = 15 - challengeTimeLeft;
+        showResult(true, `正解！${time}秒でクリア！`);
+        document.getElementById('score-calc').textContent = time + '秒';
+      } else {
+        showResult(false, `不正解... 正解は ${calcAnswer} でした`);
+      }
+    }
+
+    // 連続クリックチャレンジ
+    function 連続クリックチャレンジ開始() {
+      clickCount = 0;
+      const area = document.getElementById('challenge-area');
+      area.classList.add('active');
+      area.innerHTML = `
+        <div style="text-align: center;">
+          <p style="font-size: 1.2rem; margin-bottom: 16px;">ボタンを連打！</p>
+          <p style="font-size: 3rem; font-weight: bold; margin-bottom: 20px;" id="click-counter">0</p>
+          <button class="btn btn-danger" style="font-size: 1.5rem; padding: 20px 60px;" onclick="連続クリックカウント()">クリック！</button>
+        </div>
+      `;
+      showBanner('10秒間でできるだけ多くクリック', 10);
+      ログを追加('challenge-log', '🖱️ 連続クリックチャレンジ開始');
+
+      // タイマー終了時の処理を上書き
+      clearInterval(challengeTimer);
+      challengeTimer = setInterval(() => {
+        challengeTimeLeft--;
+        updateTimer();
+        if (challengeTimeLeft <= 0) {
+          clearInterval(challengeTimer);
+          showResult(true, `${clickCount}回クリックしました！`);
+          document.getElementById('score-click').textContent = clickCount + '回';
+        }
+      }, 1000);
+    }
+
+    function 連続クリックカウント() {
+      clickCount++;
+      document.getElementById('click-counter').textContent = clickCount;
+    }
+  </script>
+</body>
+</html>
