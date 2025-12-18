@@ -1,0 +1,227 @@
+<!-- popup.html - ポップアップ・モーダルページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ポップアップ・モーダル - RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="form.html">入力フォーム</a></li>
+          <li><a href="click.html">クリック</a></li>
+          <li><a href="keyboard.html">キーボード</a></li>
+          <li><a href="wait.html">待機</a></li>
+          <li><a href="table.html">テーブル</a></li>
+          <li><a href="popup.html" class="active">ポップアップ</a></li>
+          <li><a href="dynamic.html">動的</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">💬 ポップアップ・モーダル</h1>
+      <p class="page-description">alert、confirm、prompt、モーダルダイアログの操作をテストできます。</p>
+
+      <div class="grid-2">
+        <!-- ブラウザダイアログ -->
+        <div class="card">
+          <div class="card-title">🔔 ブラウザダイアログ</div>
+          <p style="margin-bottom: 20px; color: var(--secondary);">JavaScriptの標準ダイアログをテストします</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn btn-primary" onclick="アラートを表示()">
+              📢 アラートを表示 (alert)
+            </button>
+            <button class="btn btn-warning" onclick="確認ダイアログを表示()">
+              ❓ 確認ダイアログを表示 (confirm)
+            </button>
+            <button class="btn btn-success" onclick="プロンプトを表示()">
+              ✏️ プロンプトを表示 (prompt)
+            </button>
+          </div>
+          
+          <div style="margin-top: 20px; padding: 16px; background: rgba(245, 158, 11, 0.1); border-radius: var(--radius);">
+            <strong>⚠️ 注意:</strong><br>
+            <span style="color: var(--secondary); font-size: 0.9rem;">
+              ブラウザダイアログはRPAでの操作が特殊です。<br>
+              UIpowershellでは専用のメソッドを使用します。
+            </span>
+          </div>
+        </div>
+
+        <!-- モーダルダイアログ -->
+        <div class="card">
+          <div class="card-title">🪟 モーダルダイアログ</div>
+          <p style="margin-bottom: 20px; color: var(--secondary);">HTML/CSSで作成したモーダルをテストします</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn btn-primary" onclick="モーダルを開く('test-modal')">
+              📋 確認モーダルを開く
+            </button>
+            <button class="btn btn-secondary" onclick="モーダルを開く('form-modal')">
+              📝 フォームモーダルを開く
+            </button>
+            <button class="btn btn-danger" onclick="モーダルを開く('delete-modal')">
+              🗑️ 削除確認モーダルを開く
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 結果表示 -->
+      <div class="card">
+        <div class="card-title">📋 操作結果</div>
+        <div id="popup-result" class="result-area">
+          ダイアログの操作結果がここに表示されます
+        </div>
+      </div>
+
+      <!-- 操作ログ -->
+      <div class="card">
+        <div class="card-title">📜 操作ログ</div>
+        <div id="popup-log" class="log-area">
+          <div class="log-entry"><span class="log-time">[--:--:--]</span>ポップアップ操作がここに記録されます</div>
+        </div>
+      </div>
+
+      <!-- ダイアログ種類一覧 -->
+      <div class="card">
+        <div class="card-title">📖 ダイアログ種類一覧</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>種類</th>
+                <th>説明</th>
+                <th>戻り値</th>
+                <th>RPA操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>alert()</code></td>
+                <td>メッセージ表示のみ</td>
+                <td>なし (undefined)</td>
+                <td>OKボタンクリック</td>
+              </tr>
+              <tr>
+                <td><code>confirm()</code></td>
+                <td>はい/いいえ選択</td>
+                <td>true / false</td>
+                <td>OK/キャンセルクリック</td>
+              </tr>
+              <tr>
+                <td><code>prompt()</code></td>
+                <td>テキスト入力</td>
+                <td>入力文字列 / null</td>
+                <td>テキスト入力 → OKクリック</td>
+              </tr>
+              <tr>
+                <td>HTMLモーダル</td>
+                <td>カスタムダイアログ</td>
+                <td>任意</td>
+                <td>通常のDOM操作</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RPA実装のヒント -->
+      <div class="card" style="background: rgba(37, 99, 235, 0.05); border: 1px solid var(--primary);">
+        <div class="card-title">💡 RPA実装のヒント</div>
+        <ul style="margin-left: 20px; color: var(--secondary); line-height: 2;">
+          <li><strong>alert処理</strong>: SwitchToAlert() → Accept()</li>
+          <li><strong>confirm処理</strong>: SwitchToAlert() → Accept() または Dismiss()</li>
+          <li><strong>prompt処理</strong>: SwitchToAlert() → SendKeys() → Accept()</li>
+          <li><strong>モーダル検出</strong>: モーダル要素の表示状態（display, visibility, class）を確認</li>
+          <li><strong>モーダル内操作</strong>: 通常のDOM操作でボタンやフォームを操作</li>
+          <li><strong>待機処理</strong>: モーダル表示/非表示のアニメーション完了を待機</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- 確認モーダル -->
+  <div id="test-modal" class="modal-overlay" onclick="if(event.target===this) モーダルを閉じる('test-modal')">
+    <div class="modal">
+      <div class="modal-title">📋 確認</div>
+      <div class="modal-content">
+        この操作を実行してもよろしいですか？<br>
+        実行後は元に戻せません。
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="モーダルアクション('キャンセル')">キャンセル</button>
+        <button class="btn btn-primary" onclick="モーダルアクション('実行')">実行する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- フォームモーダル -->
+  <div id="form-modal" class="modal-overlay" onclick="if(event.target===this) モーダルを閉じる('form-modal')">
+    <div class="modal">
+      <div class="modal-title">📝 情報入力</div>
+      <div class="modal-content">
+        <div class="form-group">
+          <label for="modal-name">お名前</label>
+          <input type="text" id="modal-name" placeholder="名前を入力">
+        </div>
+        <div class="form-group">
+          <label for="modal-email">メール</label>
+          <input type="email" id="modal-email" placeholder="メールアドレスを入力">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="モーダルを閉じる('form-modal')">閉じる</button>
+        <button class="btn btn-success" onclick="フォームモーダル送信()">送信</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 削除確認モーダル -->
+  <div id="delete-modal" class="modal-overlay" onclick="if(event.target===this) モーダルを閉じる('delete-modal')">
+    <div class="modal" style="border-top: 4px solid var(--danger);">
+      <div class="modal-title">🗑️ 削除の確認</div>
+      <div class="modal-content">
+        <p style="color: var(--danger); font-weight: 500;">本当にこのデータを削除しますか？</p>
+        <p>この操作は取り消すことができません。</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="モーダルアクション('削除をキャンセル')">キャンセル</button>
+        <button class="btn btn-danger" onclick="モーダルアクション('削除を実行')">削除する</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // フォームモーダル送信
+    function フォームモーダル送信() {
+      const name = document.getElementById('modal-name').value;
+      const email = document.getElementById('modal-email').value;
+      
+      結果を表示('popup-result', `モーダルフォーム送信<br>名前: ${name || '(未入力)'}<br>メール: ${email || '(未入力)'}`, true);
+      ログを追加('popup-log', `フォームモーダル送信 - 名前: ${name}, メール: ${email}`);
+      モーダルを閉じる('form-modal');
+      
+      // フォームリセット
+      document.getElementById('modal-name').value = '';
+      document.getElementById('modal-email').value = '';
+    }
+  </script>
+</body>
+</html>

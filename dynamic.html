@@ -1,0 +1,285 @@
+<!-- dynamic.html - 動的コンテンツページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>動的コンテンツ - RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    .dynamic-card {
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .infinite-scroll-area {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .scroll-item {
+      padding: 12px;
+      background: var(--light);
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+    }
+    .scroll-item:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="form.html">入力フォーム</a></li>
+          <li><a href="click.html">クリック</a></li>
+          <li><a href="keyboard.html">キーボード</a></li>
+          <li><a href="wait.html">待機</a></li>
+          <li><a href="table.html">テーブル</a></li>
+          <li><a href="popup.html">ポップアップ</a></li>
+          <li><a href="dynamic.html" class="active">動的</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">⚡ 動的コンテンツ</h1>
+      <p class="page-description">動的要素の生成、AJAX風データ読み込み、DOM変更検出をテストできます。</p>
+
+      <div class="grid-2">
+        <!-- 動的要素生成 -->
+        <div class="card">
+          <div class="card-title">🆕 動的要素生成</div>
+          <p style="margin-bottom: 16px; color: var(--secondary);">
+            ボタンをクリックすると2秒後に新しい要素が追加されます
+          </p>
+          
+          <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+            <button class="btn btn-primary" onclick="動的要素を追加()">要素を追加</button>
+            <button class="btn btn-secondary" onclick="動的コンテンツをクリア()">クリア</button>
+          </div>
+          
+          <!-- ローディング -->
+          <div id="dynamic-loading" class="loading-area hidden">
+            <div class="spinner"></div>
+            <p class="loading-text">要素を生成中...</p>
+          </div>
+          
+          <!-- 動的要素コンテナ -->
+          <div id="dynamic-container">
+            <!-- 動的に要素が追加される -->
+          </div>
+        </div>
+
+        <!-- AJAX風データ読み込み -->
+        <div class="card">
+          <div class="card-title">🔄 AJAX風データ読み込み</div>
+          <p style="margin-bottom: 16px; color: var(--secondary);">
+            サーバーからのデータ取得をシミュレートします
+          </p>
+          
+          <button id="load-data-btn" class="btn btn-primary" onclick="データを読み込む()" style="margin-bottom: 16px;">
+            データを読み込む
+          </button>
+          
+          <!-- データ表示エリア -->
+          <div id="ajax-data" class="result-area">
+            ボタンをクリックするとデータが表示されます
+          </div>
+        </div>
+      </div>
+
+      <!-- 無限スクロール -->
+      <div class="card">
+        <div class="card-title">📜 無限スクロール</div>
+        <p style="margin-bottom: 16px; color: var(--secondary);">
+          スクロールすると追加のアイテムが読み込まれます
+        </p>
+        
+        <div id="infinite-scroll-area" class="infinite-scroll-area">
+          <div class="scroll-item" data-index="1">アイテム 1</div>
+          <div class="scroll-item" data-index="2">アイテム 2</div>
+          <div class="scroll-item" data-index="3">アイテム 3</div>
+          <div class="scroll-item" data-index="4">アイテム 4</div>
+          <div class="scroll-item" data-index="5">アイテム 5</div>
+        </div>
+        
+        <p id="scroll-status" style="margin-top: 8px; color: var(--secondary); font-size: 0.9rem;">
+          現在のアイテム数: <span id="item-count">5</span>
+        </p>
+      </div>
+
+      <!-- 属性変更検出 -->
+      <div class="card">
+        <div class="card-title">🔍 属性変更検出</div>
+        <p style="margin-bottom: 16px; color: var(--secondary);">
+          要素の属性変更をテストできます
+        </p>
+        
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
+          <button class="btn btn-primary" onclick="属性を変更('data-status', 'active')">
+            status → active
+          </button>
+          <button class="btn btn-warning" onclick="属性を変更('data-status', 'pending')">
+            status → pending
+          </button>
+          <button class="btn btn-danger" onclick="属性を変更('data-status', 'inactive')">
+            status → inactive
+          </button>
+          <button class="btn btn-secondary" onclick="属性を変更('data-status', '')">
+            属性を削除
+          </button>
+        </div>
+        
+        <div id="attribute-target" data-status="" style="padding: 20px; background: var(--light); border-radius: var(--radius); text-align: center;">
+          <p>ターゲット要素</p>
+          <p style="font-family: var(--font-mono); font-size: 0.9rem; margin-top: 8px;">
+            data-status = "<span id="attribute-display"></span>"
+          </p>
+        </div>
+      </div>
+
+      <!-- 結果表示 -->
+      <div class="card">
+        <div class="card-title">📋 操作結果</div>
+        <div id="dynamic-result" class="result-area">
+          結果がここに表示されます
+        </div>
+      </div>
+
+      <!-- 操作ログ -->
+      <div class="card">
+        <div class="card-title">📜 操作ログ</div>
+        <div id="dynamic-log" class="log-area">
+          <div class="log-entry"><span class="log-time">[--:--:--]</span>動的コンテンツ操作がここに記録されます</div>
+        </div>
+      </div>
+
+      <!-- RPA実装のヒント -->
+      <div class="card" style="background: rgba(37, 99, 235, 0.05); border: 1px solid var(--primary);">
+        <div class="card-title">💡 RPA実装のヒント</div>
+        <ul style="margin-left: 20px; color: var(--secondary); line-height: 2;">
+          <li><strong>動的要素待機</strong>: 要素が存在するまでループで確認 (WebDriverWait相当)</li>
+          <li><strong>DOM変更検知</strong>: 要素数の変化や属性値の変化を監視</li>
+          <li><strong>スクロール操作</strong>: scrollIntoView や scroll イベントを発火</li>
+          <li><strong>AJAX完了待機</strong>: ローディング要素の非表示を待機</li>
+          <li><strong>属性監視</strong>: getAttribute で属性値を取得して判定</li>
+          <li><strong>安定性確保</strong>: 要素操作前に表示状態とクリック可能状態を確認</li>
+        </ul>
+      </div>
+
+      <!-- 要素ID一覧 -->
+      <div class="card">
+        <div class="card-title">🏷️ 要素ID一覧（RPA開発用）</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>要素</th>
+                <th>識別子</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>動的コンテナ</td><td><code>dynamic-container</code></td><td>動的要素が追加される親要素</td></tr>
+              <tr><td>ローディング</td><td><code>dynamic-loading</code></td><td>読み込み中表示（hiddenクラスで制御）</td></tr>
+              <tr><td>AJAXデータ</td><td><code>ajax-data</code></td><td>非同期読み込みデータ表示</td></tr>
+              <tr><td>スクロールエリア</td><td><code>infinite-scroll-area</code></td><td>無限スクロール対象</td></tr>
+              <tr><td>アイテム数</td><td><code>item-count</code></td><td>現在のアイテム数表示</td></tr>
+              <tr><td>属性ターゲット</td><td><code>attribute-target</code></td><td>属性変更テスト対象</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // 無限スクロール
+    let itemCounter = 5;
+    const scrollArea = document.getElementById('infinite-scroll-area');
+    
+    if (scrollArea) {
+      scrollArea.addEventListener('scroll', function() {
+        if (this.scrollTop + this.clientHeight >= this.scrollHeight - 10) {
+          // 下までスクロールしたら追加
+          追加アイテムを読み込む();
+        }
+      });
+    }
+    
+    function 追加アイテムを読み込む() {
+      const container = document.getElementById('infinite-scroll-area');
+      const countDisplay = document.getElementById('item-count');
+      
+      // 3アイテム追加
+      for (let i = 0; i < 3; i++) {
+        itemCounter++;
+        const item = document.createElement('div');
+        item.className = 'scroll-item';
+        item.dataset.index = itemCounter;
+        item.textContent = `アイテム ${itemCounter}`;
+        container.appendChild(item);
+      }
+      
+      countDisplay.textContent = itemCounter;
+      ログを追加('dynamic-log', `スクロールで${itemCounter}件まで読み込み`);
+    }
+    
+    // 属性変更
+    function 属性を変更(attrName, value) {
+      const target = document.getElementById('attribute-target');
+      const display = document.getElementById('attribute-display');
+      
+      if (value) {
+        target.setAttribute(attrName, value);
+        display.textContent = value;
+      } else {
+        target.removeAttribute(attrName);
+        display.textContent = '(なし)';
+      }
+      
+      // 背景色変更
+      switch(value) {
+        case 'active':
+          target.style.background = 'rgba(16, 185, 129, 0.1)';
+          target.style.borderLeft = '4px solid var(--success)';
+          break;
+        case 'pending':
+          target.style.background = 'rgba(245, 158, 11, 0.1)';
+          target.style.borderLeft = '4px solid var(--warning)';
+          break;
+        case 'inactive':
+          target.style.background = 'rgba(239, 68, 68, 0.1)';
+          target.style.borderLeft = '4px solid var(--danger)';
+          break;
+        default:
+          target.style.background = 'var(--light)';
+          target.style.borderLeft = 'none';
+      }
+      
+      ログを追加('dynamic-log', `属性変更: ${attrName}="${value || '(削除)'}"`);
+      結果を表示('dynamic-result', `属性が変更されました: ${attrName}="${value || '(なし)'}"`, true);
+    }
+    
+    // 初期化
+    document.getElementById('attribute-display').textContent = '(なし)';
+  </script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!-- keyboard.html - キーボードテストページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>キーボードテスト - RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="form.html">入力フォーム</a></li>
+          <li><a href="click.html">クリック</a></li>
+          <li><a href="keyboard.html" class="active">キーボード</a></li>
+          <li><a href="wait.html">待機</a></li>
+          <li><a href="table.html">テーブル</a></li>
+          <li><a href="popup.html">ポップアップ</a></li>
+          <li><a href="dynamic.html">動的</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">⌨️ キーボードテスト</h1>
+      <p class="page-description">キー入力検出、ショートカットキー（Ctrl+C等）、特殊キー（Enter, Tab, 矢印キー）をテストできます。</p>
+
+      <!-- キー入力エリア -->
+      <div class="card">
+        <div class="card-title">🎹 キー入力検出エリア</div>
+        <p style="margin-bottom: 16px; color: var(--secondary);">下のエリアをクリックしてフォーカスし、キーボードを押してください</p>
+        <div id="key-input-area" class="key-input-area">
+          <p style="margin-bottom: 12px; opacity: 0.7;">ここをクリックしてキー入力</p>
+          <div id="key-display" class="key-display">---</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- テスト推奨キー -->
+        <div class="card">
+          <div class="card-title">🔤 テスト推奨キー</div>
+          <table>
+            <thead>
+              <tr>
+                <th>カテゴリ</th>
+                <th>キー</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>文字キー</td>
+                <td>A, B, C, 1, 2, 3</td>
+              </tr>
+              <tr>
+                <td>特殊キー</td>
+                <td>Enter, Tab, Escape, Space</td>
+              </tr>
+              <tr>
+                <td>矢印キー</td>
+                <td>↑, ↓, ←, →</td>
+              </tr>
+              <tr>
+                <td>ファンクション</td>
+                <td>F1 ～ F12</td>
+              </tr>
+              <tr>
+                <td>修飾キー</td>
+                <td>Shift, Ctrl, Alt</td>
+              </tr>
+              <tr>
+                <td>ショートカット</td>
+                <td>Ctrl+C, Ctrl+V, Ctrl+S, Ctrl+A</td>
+              </tr>
+              <tr>
+                <td>その他</td>
+                <td>Delete, Backspace, Home, End</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- よく使うショートカット -->
+        <div class="card">
+          <div class="card-title">⚡ よく使うショートカット</div>
+          <table>
+            <thead>
+              <tr>
+                <th>ショートカット</th>
+                <th>機能</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Ctrl + C</code></td>
+                <td>コピー</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl + V</code></td>
+                <td>貼り付け</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl + X</code></td>
+                <td>切り取り</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl + Z</code></td>
+                <td>元に戻す</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl + S</code></td>
+                <td>保存</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl + A</code></td>
+                <td>全選択</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl + F</code></td>
+                <td>検索</td>
+              </tr>
+              <tr>
+                <td><code>Alt + F4</code></td>
+                <td>閉じる</td>
+              </tr>
+              <tr>
+                <td><code>Ctrl + Shift + S</code></td>
+                <td>名前を付けて保存</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 操作ログ -->
+      <div class="card">
+        <div class="card-title">📜 キー入力履歴</div>
+        <div id="key-log" class="log-area">
+          <div class="log-entry"><span class="log-time">[--:--:--]</span>キー入力がここに記録されます</div>
+        </div>
+        <button class="btn btn-secondary" style="margin-top: 12px;" onclick="document.getElementById('key-log').innerHTML = ''">ログをクリア</button>
+      </div>
+
+      <!-- キーコード参考 -->
+      <div class="card">
+        <div class="card-title">📖 キーコード参考</div>
+        <p style="margin-bottom: 16px; color: var(--secondary);">RPA開発時に使用するキーコード一覧</p>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>キー</th>
+                <th>key</th>
+                <th>code</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Enter</td><td>Enter</td><td>Enter / NumpadEnter</td></tr>
+              <tr><td>Tab</td><td>Tab</td><td>Tab</td></tr>
+              <tr><td>Escape</td><td>Escape</td><td>Escape</td></tr>
+              <tr><td>Space</td><td> (空白)</td><td>Space</td></tr>
+              <tr><td>矢印↑</td><td>ArrowUp</td><td>ArrowUp</td></tr>
+              <tr><td>矢印↓</td><td>ArrowDown</td><td>ArrowDown</td></tr>
+              <tr><td>矢印←</td><td>ArrowLeft</td><td>ArrowLeft</td></tr>
+              <tr><td>矢印→</td><td>ArrowRight</td><td>ArrowRight</td></tr>
+              <tr><td>Delete</td><td>Delete</td><td>Delete</td></tr>
+              <tr><td>Backspace</td><td>Backspace</td><td>Backspace</td></tr>
+              <tr><td>Home</td><td>Home</td><td>Home</td></tr>
+              <tr><td>End</td><td>End</td><td>End</td></tr>
+              <tr><td>Page Up</td><td>PageUp</td><td>PageUp</td></tr>
+              <tr><td>Page Down</td><td>PageDown</td><td>PageDown</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 注意事項 -->
+      <div class="card" style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning);">
+        <div class="card-title">⚠️ 注意事項</div>
+        <ul style="margin-left: 20px; color: var(--secondary);">
+          <li>ブラウザによっては一部のショートカットキーがキャプチャできない場合があります</li>
+          <li>F1, F5などのファンクションキーはブラウザの機能が優先される場合があります</li>
+          <li>Alt+F4などのシステムショートカットはOSレベルで処理されます</li>
+          <li>キー入力エリアにフォーカスがないと検出されません</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

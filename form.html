@@ -1,0 +1,210 @@
+<!-- form.html - 入力フォームテストページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>入力フォーム - RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="form.html" class="active">入力フォーム</a></li>
+          <li><a href="click.html">クリック</a></li>
+          <li><a href="keyboard.html">キーボード</a></li>
+          <li><a href="wait.html">待機</a></li>
+          <li><a href="table.html">テーブル</a></li>
+          <li><a href="popup.html">ポップアップ</a></li>
+          <li><a href="dynamic.html">動的</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">📝 入力フォームテスト</h1>
+      <p class="page-description">テキスト入力、選択、チェックボックス、ラジオボタン、日付選択、オートコンプリート、ファイルアップロードをテストできます。</p>
+
+      <div class="grid-2">
+        <!-- フォームカード -->
+        <div class="card">
+          <div class="card-title">🖊️ 基本入力フォーム</div>
+          <form id="test-form" onsubmit="event.preventDefault(); フォームを送信();">
+            
+            <!-- テキスト入力 -->
+            <div class="form-group">
+              <label for="name">名前 <span style="color: var(--danger);">*</span></label>
+              <input type="text" id="name" name="name" placeholder="山田太郎" required>
+            </div>
+
+            <!-- メール入力 -->
+            <div class="form-group">
+              <label for="email">メールアドレス</label>
+              <input type="email" id="email" name="email" placeholder="example@mail.com">
+            </div>
+
+            <!-- ラジオボタン -->
+            <div class="form-group">
+              <label>性別</label>
+              <div class="radio-group">
+                <label>
+                  <input type="radio" name="gender" value="male"> 男性
+                </label>
+                <label>
+                  <input type="radio" name="gender" value="female"> 女性
+                </label>
+                <label>
+                  <input type="radio" name="gender" value="other"> その他
+                </label>
+              </div>
+            </div>
+
+            <!-- チェックボックス -->
+            <div class="form-group">
+              <label>趣味（複数選択可）</label>
+              <div class="checkbox-group">
+                <label>
+                  <input type="checkbox" name="hobby" value="reading"> 読書
+                </label>
+                <label>
+                  <input type="checkbox" name="hobby" value="movie"> 映画
+                </label>
+                <label>
+                  <input type="checkbox" name="hobby" value="sports"> スポーツ
+                </label>
+                <label>
+                  <input type="checkbox" name="hobby" value="music"> 音楽
+                </label>
+                <label>
+                  <input type="checkbox" name="hobby" value="travel"> 旅行
+                </label>
+              </div>
+            </div>
+
+            <!-- セレクトボックス -->
+            <div class="form-group">
+              <label for="prefecture">都道府県</label>
+              <select id="prefecture" name="prefecture">
+                <option value="">選択してください</option>
+                <option value="tokyo">東京都</option>
+                <option value="osaka">大阪府</option>
+                <option value="kyoto">京都府</option>
+                <option value="aichi">愛知県</option>
+                <option value="fukuoka">福岡県</option>
+                <option value="hokkaido">北海道</option>
+                <option value="kanagawa">神奈川県</option>
+                <option value="saitama">埼玉県</option>
+                <option value="chiba">千葉県</option>
+                <option value="hyogo">兵庫県</option>
+              </select>
+            </div>
+
+            <!-- 日付入力 -->
+            <div class="form-group">
+              <label for="date">日付</label>
+              <input type="date" id="date" name="date">
+            </div>
+
+            <!-- テキストエリア -->
+            <div class="form-group">
+              <label for="remarks">備考</label>
+              <textarea id="remarks" name="remarks" placeholder="自由にご記入ください"></textarea>
+            </div>
+
+            <!-- ボタン -->
+            <div style="display: flex; gap: 12px;">
+              <button type="submit" class="btn btn-primary">送信</button>
+              <button type="button" class="btn btn-secondary" onclick="フォームをリセット()">リセット</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- 右カラム -->
+        <div>
+          <!-- オートコンプリート -->
+          <div class="card">
+            <div class="card-title">🔍 オートコンプリート</div>
+            <div class="form-group autocomplete-container">
+              <label for="autocomplete-input">都道府県（入力補完付き）</label>
+              <input type="text" id="autocomplete-input" placeholder="都道府県を入力...">
+              <div id="autocomplete-list" class="autocomplete-list"></div>
+            </div>
+            <p style="color: var(--secondary); font-size: 0.85rem;">
+              ヒント: 「東」「大」「北」などを入力すると候補が表示されます
+            </p>
+          </div>
+
+          <!-- ファイルアップロード -->
+          <div class="card">
+            <div class="card-title">📁 ファイルアップロード</div>
+            <div id="file-drop-area" class="file-upload-area">
+              <div class="file-upload-icon">📤</div>
+              <p>クリックまたはドラッグ&ドロップ<br>でファイルを選択</p>
+              <input type="file" id="file-input" hidden>
+            </div>
+            <div id="file-result" class="result-area" style="margin-top: 12px;">
+              選択されたファイルがここに表示されます
+            </div>
+          </div>
+
+          <!-- 結果表示 -->
+          <div class="card">
+            <div class="card-title">📋 送信結果</div>
+            <div id="form-result" class="result-area">
+              結果がここに表示されます
+            </div>
+          </div>
+
+          <!-- 操作ログ -->
+          <div class="card">
+            <div class="card-title">📜 操作ログ</div>
+            <div id="form-log" class="log-area">
+              <div class="log-entry"><span class="log-time">[--:--:--]</span>ログがここに表示されます</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 要素ID一覧 -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">🏷️ 要素ID一覧（RPA開発用）</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>要素</th>
+                <th>ID</th>
+                <th>タイプ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>名前入力</td><td><code>name</code></td><td>input[text]</td></tr>
+              <tr><td>メール入力</td><td><code>email</code></td><td>input[email]</td></tr>
+              <tr><td>性別</td><td><code>name="gender"</code></td><td>input[radio]</td></tr>
+              <tr><td>趣味</td><td><code>name="hobby"</code></td><td>input[checkbox]</td></tr>
+              <tr><td>都道府県選択</td><td><code>prefecture</code></td><td>select</td></tr>
+              <tr><td>日付</td><td><code>date</code></td><td>input[date]</td></tr>
+              <tr><td>備考</td><td><code>remarks</code></td><td>textarea</td></tr>
+              <tr><td>オートコンプリート</td><td><code>autocomplete-input</code></td><td>input[text]</td></tr>
+              <tr><td>ファイル入力</td><td><code>file-input</code></td><td>input[file]</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

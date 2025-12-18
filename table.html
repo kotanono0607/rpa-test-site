@@ -1,0 +1,180 @@
+<!-- table.html - テーブル・データ取得ページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>テーブル・データ取得 - RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="form.html">入力フォーム</a></li>
+          <li><a href="click.html">クリック</a></li>
+          <li><a href="keyboard.html">キーボード</a></li>
+          <li><a href="wait.html">待機</a></li>
+          <li><a href="table.html" class="active">テーブル</a></li>
+          <li><a href="popup.html">ポップアップ</a></li>
+          <li><a href="dynamic.html">動的</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">📊 テーブル・データ取得</h1>
+      <p class="page-description">テーブルデータ抽出、検索、ページネーション、行選択をテストできます。</p>
+
+      <!-- テーブルカード -->
+      <div class="card">
+        <div class="card-title">🛒 商品一覧</div>
+        
+        <!-- 検索エリア -->
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center;">
+          <div class="form-group" style="margin: 0; flex: 1; max-width: 300px;">
+            <input type="text" id="table-search" placeholder="商品名またはIDで検索..." onkeyup="テーブルを検索()">
+          </div>
+          <button class="btn btn-primary" onclick="テーブルを検索()">検索</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('table-search').value=''; テーブルを検索();">クリア</button>
+        </div>
+        
+        <!-- テーブル -->
+        <div class="table-container">
+          <table id="product-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>商品名</th>
+                <th>価格</th>
+                <th>在庫数</th>
+                <th>状態</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <!-- JavaScriptで生成 -->
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- ページネーション -->
+        <div id="pagination" class="pagination">
+          <!-- JavaScriptで生成 -->
+        </div>
+        
+        <!-- 選択結果 -->
+        <div id="table-result" class="result-area" style="margin-top: 20px;">
+          選択した商品がここに表示されます
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- データ情報 -->
+        <div class="card">
+          <div class="card-title">📈 データ情報</div>
+          <table>
+            <tr>
+              <td>総商品数</td>
+              <td><strong>15件</strong></td>
+            </tr>
+            <tr>
+              <td>1ページあたり</td>
+              <td><strong>5件</strong></td>
+            </tr>
+            <tr>
+              <td>総ページ数</td>
+              <td><strong>3ページ</strong></td>
+            </tr>
+            <tr>
+              <td>在庫あり</td>
+              <td><span class="badge badge-success">11件</span></td>
+            </tr>
+            <tr>
+              <td>在庫なし</td>
+              <td><span class="badge badge-danger">4件</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- 操作ログ -->
+        <div class="card">
+          <div class="card-title">📜 操作ログ</div>
+          <div id="table-log" class="log-area">
+            <div class="log-entry"><span class="log-time">[--:--:--]</span>テーブル操作がここに記録されます</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 要素ID一覧 -->
+      <div class="card">
+        <div class="card-title">🏷️ 要素ID一覧（RPA開発用）</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>要素</th>
+                <th>識別子</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>検索入力</td><td><code>table-search</code></td><td>検索キーワード入力</td></tr>
+              <tr><td>テーブル本体</td><td><code>product-table</code></td><td>テーブル要素</td></tr>
+              <tr><td>テーブル行</td><td><code>data-id</code>属性</td><td>各行のID（001～015）</td></tr>
+              <tr><td>ページネーション</td><td><code>pagination</code></td><td>ページ切り替えエリア</td></tr>
+              <tr><td>選択ボタン</td><td>各行内</td><td>行選択ボタン</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RPA実装のヒント -->
+      <div class="card" style="background: rgba(37, 99, 235, 0.05); border: 1px solid var(--primary);">
+        <div class="card-title">💡 RPA実装のヒント</div>
+        <ul style="margin-left: 20px; color: var(--secondary); line-height: 2;">
+          <li><strong>テーブルデータ取得</strong>: tr要素をループして各td内のテキストを取得</li>
+          <li><strong>行数カウント</strong>: tbody内のtr要素数を取得</li>
+          <li><strong>特定行の取得</strong>: data-id属性を使って特定の行を識別</li>
+          <li><strong>ページ移動</strong>: ページネーションボタンをクリック</li>
+          <li><strong>全データ取得</strong>: 各ページを順番に移動しながらデータを収集</li>
+          <li><strong>検索結果待機</strong>: 検索後のテーブル更新を待ってからデータ取得</li>
+        </ul>
+      </div>
+
+      <!-- サンプルコード -->
+      <div class="card">
+        <div class="card-title">📝 PowerShellサンプル（参考）</div>
+        <pre style="background: var(--dark); color: #a5f3fc; padding: 16px; border-radius: var(--radius); overflow-x: auto; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6;">
+# テーブルデータ取得の疑似コード
+$テーブル行 = $ブラウザ.FindElements("css", "#table-body tr")
+
+foreach ($行 in $テーブル行) {
+    $セル = $行.FindElements("css", "td")
+    $ID = $セル[0].Text
+    $商品名 = $セル[1].Text
+    $価格 = $セル[2].Text
+    
+    Write-Host "ID: $ID, 商品名: $商品名, 価格: $価格"
+}
+
+# ページ移動
+$次へボタン = $ブラウザ.FindElement("xpath", "//button[contains(text(),'次へ')]")
+$次へボタン.Click()</pre>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

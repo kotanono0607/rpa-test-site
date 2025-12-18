@@ -1,0 +1,240 @@
+<!-- wait.html - 待機テストページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>待機テスト - RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    .progress-container {
+      background: var(--border);
+      border-radius: 20px;
+      height: 24px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      height: 100%;
+      width: 0%;
+      transition: width 0.05s linear;
+      border-radius: 20px;
+    }
+    .step-item {
+      padding: 12px 16px;
+      background: var(--light);
+      border-radius: var(--radius);
+      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .step-item.hidden {
+      display: none;
+    }
+    .step-number {
+      background: var(--primary);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .countdown {
+      font-size: 4rem;
+      font-weight: bold;
+      color: var(--primary);
+      text-align: center;
+      font-family: var(--font-mono);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="form.html">入力フォーム</a></li>
+          <li><a href="click.html">クリック</a></li>
+          <li><a href="keyboard.html">キーボード</a></li>
+          <li><a href="wait.html" class="active">待機</a></li>
+          <li><a href="table.html">テーブル</a></li>
+          <li><a href="popup.html">ポップアップ</a></li>
+          <li><a href="dynamic.html">動的</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">⏳ 待機テスト</h1>
+      <p class="page-description">遅延表示、ローディング、プログレスバー、段階的表示など、待機処理をテストできます。</p>
+
+      <div class="grid-2">
+        <!-- 遅延表示テスト -->
+        <div class="card">
+          <div class="card-title">⏱️ 遅延表示テスト</div>
+          <p style="margin-bottom: 16px; color: var(--secondary);">ボタンをクリックすると指定秒数後に要素が表示されます</p>
+          
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+            <button class="btn btn-primary" onclick="遅延表示テスト(1000)">1秒後に表示</button>
+            <button class="btn btn-primary" onclick="遅延表示テスト(3000)">3秒後に表示</button>
+            <button class="btn btn-primary" onclick="遅延表示テスト(5000)">5秒後に表示</button>
+          </div>
+          
+          <!-- ローディング表示 -->
+          <div id="loading-area" class="loading-area hidden">
+            <div class="spinner"></div>
+            <p class="loading-text">ローディング中...</p>
+          </div>
+          
+          <!-- 結果表示 -->
+          <div id="wait-result" class="hidden" style="text-align: center; padding: 20px;">
+            <p class="success-message">✅ 要素が表示されました！</p>
+            <button id="next-step-btn" class="btn btn-success" style="margin-top: 12px;">次のステップへ</button>
+          </div>
+        </div>
+
+        <!-- プログレスバーテスト -->
+        <div class="card">
+          <div class="card-title">📊 プログレスバーテスト</div>
+          <p style="margin-bottom: 16px; color: var(--secondary);">プログレスバーの進捗を待機するテストです</p>
+          
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+            <button class="btn btn-primary" onclick="プログレスバーテスト(2000)">2秒で完了</button>
+            <button class="btn btn-primary" onclick="プログレスバーテスト(5000)">5秒で完了</button>
+            <button class="btn btn-primary" onclick="プログレスバーテスト(10000)">10秒で完了</button>
+          </div>
+          
+          <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+          <p style="text-align: center; font-size: 1.2rem;"><span id="progress-text">0</span>%</p>
+        </div>
+      </div>
+
+      <!-- 段階的表示テスト -->
+      <div class="card">
+        <div class="card-title">📝 段階的表示テスト</div>
+        <p style="margin-bottom: 16px; color: var(--secondary);">1秒ごとにステップが順番に表示されます（全5ステップ）</p>
+        
+        <button class="btn btn-primary" onclick="段階的表示テスト()" style="margin-bottom: 20px;">開始</button>
+        
+        <div id="steps-container">
+          <div class="step-item hidden" id="step-1">
+            <span class="step-number">1</span>
+            <span>ステップ1: データを準備しています...</span>
+          </div>
+          <div class="step-item hidden" id="step-2">
+            <span class="step-number">2</span>
+            <span>ステップ2: 接続を確立しています...</span>
+          </div>
+          <div class="step-item hidden" id="step-3">
+            <span class="step-number">3</span>
+            <span>ステップ3: データを送信しています...</span>
+          </div>
+          <div class="step-item hidden" id="step-4">
+            <span class="step-number">4</span>
+            <span>ステップ4: 結果を処理しています...</span>
+          </div>
+          <div class="step-item hidden" id="step-5">
+            <span class="step-number">✓</span>
+            <span>完了しました！</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- カウントダウンテスト -->
+      <div class="card">
+        <div class="card-title">⏰ カウントダウンテスト</div>
+        <p style="margin-bottom: 16px; color: var(--secondary);">カウントダウン終了を待機するテストです</p>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+          <button class="btn btn-primary" onclick="カウントダウン開始(5)">5秒カウントダウン</button>
+          <button class="btn btn-primary" onclick="カウントダウン開始(10)">10秒カウントダウン</button>
+        </div>
+        
+        <div id="countdown" class="countdown">--</div>
+        <p id="countdown-status" style="text-align: center; color: var(--secondary); margin-top: 8px;">ボタンを押して開始</p>
+      </div>
+
+      <!-- 操作ログ -->
+      <div class="card">
+        <div class="card-title">📜 操作ログ</div>
+        <div id="wait-log" class="log-area">
+          <div class="log-entry"><span class="log-time">[--:--:--]</span>待機処理がここに記録されます</div>
+        </div>
+      </div>
+
+      <!-- RPA実装のヒント -->
+      <div class="card" style="background: rgba(37, 99, 235, 0.05); border: 1px solid var(--primary);">
+        <div class="card-title">💡 RPA実装のヒント</div>
+        <ul style="margin-left: 20px; color: var(--secondary); line-height: 2;">
+          <li><strong>要素待機</strong>: 要素が表示されるまでループで確認する</li>
+          <li><strong>タイムアウト設定</strong>: 無限ループを防ぐため、最大待機時間を設定する</li>
+          <li><strong>ポーリング間隔</strong>: 100ms～500ms程度の間隔でチェックする</li>
+          <li><strong>プログレス監視</strong>: 進捗率を取得して100%になるまで待機</li>
+          <li><strong>DOM変更検知</strong>: hidden クラスの有無で表示状態を判定</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // カウントダウン機能
+    function カウントダウン開始(seconds) {
+      const display = document.getElementById('countdown');
+      const status = document.getElementById('countdown-status');
+      let remaining = seconds;
+      
+      ログを追加('wait-log', `${seconds}秒カウントダウン開始`);
+      status.textContent = 'カウントダウン中...';
+      
+      display.textContent = remaining;
+      
+      const timer = setInterval(() => {
+        remaining--;
+        display.textContent = remaining;
+        
+        if (remaining <= 0) {
+          clearInterval(timer);
+          display.textContent = '✓';
+          status.textContent = '完了しました！';
+          ログを追加('wait-log', 'カウントダウン完了');
+        }
+      }, 1000);
+    }
+    
+    // 段階的表示（上書き）
+    function 段階的表示テスト() {
+      const steps = document.querySelectorAll('#steps-container .step-item');
+      
+      // すべてのステップを非表示
+      steps.forEach(step => step.classList.add('hidden'));
+      
+      ログを追加('wait-log', '段階的表示開始');
+      
+      steps.forEach((step, index) => {
+        setTimeout(() => {
+          step.classList.remove('hidden');
+          ログを追加('wait-log', `ステップ${index + 1} 表示`);
+        }, (index + 1) * 1000);
+      });
+    }
+  </script>
+</body>
+</html>

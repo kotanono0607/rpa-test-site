@@ -1,0 +1,167 @@
+<!-- click.html - クリックテストページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>クリックテスト - RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="form.html">入力フォーム</a></li>
+          <li><a href="click.html" class="active">クリック</a></li>
+          <li><a href="keyboard.html">キーボード</a></li>
+          <li><a href="wait.html">待機</a></li>
+          <li><a href="table.html">テーブル</a></li>
+          <li><a href="popup.html">ポップアップ</a></li>
+          <li><a href="dynamic.html">動的</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">🖱️ クリックテスト</h1>
+      <p class="page-description">マウス座標追跡、左/右/ダブルクリック、ドラッグ&ドロップ、右クリックメニューをテストできます。</p>
+
+      <!-- マウス座標表示 -->
+      <div class="card">
+        <div class="card-title">📍 マウス座標</div>
+        <div class="coordinate-display">
+          X = <span id="mouse-x">0</span> &nbsp;|&nbsp; Y = <span id="mouse-y">0</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- クリックターゲット -->
+        <div class="card">
+          <div class="card-title">🎯 クリックターゲット</div>
+          <p style="margin-bottom: 16px; color: var(--secondary);">各ターゲットを左クリック、右クリック、ダブルクリックしてください</p>
+          <div class="target-area">
+            <div class="target-box target-a" data-target="A">A</div>
+            <div class="target-box target-b" data-target="B">B</div>
+            <div class="target-box target-c" data-target="C">C</div>
+            <div class="target-box target-d" data-target="D">D</div>
+            <div class="target-box target-e" data-target="E">E</div>
+          </div>
+          
+          <!-- クリックカウンター -->
+          <div style="margin-top: 20px;">
+            <table>
+              <tr>
+                <th>ターゲット</th>
+                <th>A</th>
+                <th>B</th>
+                <th>C</th>
+                <th>D</th>
+                <th>E</th>
+              </tr>
+              <tr>
+                <td>クリック数</td>
+                <td id="count-a">0</td>
+                <td id="count-b">0</td>
+                <td id="count-c">0</td>
+                <td id="count-d">0</td>
+                <td id="count-e">0</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- ドラッグ&ドロップ -->
+        <div class="card">
+          <div class="card-title">✋ ドラッグ&ドロップ</div>
+          <p style="margin-bottom: 16px; color: var(--secondary);">アイテムをドラッグして別のエリアにドロップしてください</p>
+          <div class="drag-area">
+            <div class="drag-zone" data-zone="エリアA">
+              <div class="drag-zone-title">エリアA</div>
+              <div class="draggable-item" id="item-1">アイテム1</div>
+              <div class="draggable-item" id="item-2">アイテム2</div>
+            </div>
+            <div class="drag-zone" data-zone="エリアB">
+              <div class="drag-zone-title">エリアB</div>
+              <div class="draggable-item" id="item-3">アイテム3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右クリックメニュー -->
+      <div class="card">
+        <div class="card-title">📋 右クリックメニュー</div>
+        <p style="margin-bottom: 16px; color: var(--secondary);">下のエリアで右クリックするとコンテキストメニューが表示されます</p>
+        <div id="context-menu-area" style="background: var(--light); padding: 60px; border-radius: var(--radius); text-align: center; border: 2px dashed var(--border);">
+          <p style="color: var(--secondary);">このエリアで右クリックしてください</p>
+        </div>
+      </div>
+
+      <!-- 右クリックメニュー（非表示） -->
+      <div id="context-menu" class="context-menu">
+        <div class="context-menu-item">📋 コピー</div>
+        <div class="context-menu-item">📄 貼り付け</div>
+        <div class="context-menu-item">✂️ 切り取り</div>
+        <div class="context-menu-item">🗑️ 削除</div>
+      </div>
+
+      <!-- ホバーテスト -->
+      <div class="card">
+        <div class="card-title">👆 ホバーテスト</div>
+        <p style="margin-bottom: 16px; color: var(--secondary);">ボタンにマウスを乗せると色が変わります</p>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button class="btn btn-primary" onmouseenter="ログを追加('click-log', 'ホバー: プライマリボタン')">プライマリ</button>
+          <button class="btn btn-secondary" onmouseenter="ログを追加('click-log', 'ホバー: セカンダリボタン')">セカンダリ</button>
+          <button class="btn btn-success" onmouseenter="ログを追加('click-log', 'ホバー: 成功ボタン')">成功</button>
+          <button class="btn btn-warning" onmouseenter="ログを追加('click-log', 'ホバー: 警告ボタン')">警告</button>
+          <button class="btn btn-danger" onmouseenter="ログを追加('click-log', 'ホバー: 危険ボタン')">危険</button>
+        </div>
+      </div>
+
+      <!-- 操作ログ -->
+      <div class="card">
+        <div class="card-title">📜 操作ログ</div>
+        <div id="click-log" class="log-area">
+          <div class="log-entry"><span class="log-time">[--:--:--]</span>マウス操作がここに記録されます</div>
+        </div>
+      </div>
+
+      <!-- 要素ID一覧 -->
+      <div class="card">
+        <div class="card-title">🏷️ 要素ID一覧（RPA開発用）</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>要素</th>
+                <th>識別子</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>マウスX座標</td><td><code>mouse-x</code></td><td>現在のマウスX座標</td></tr>
+              <tr><td>マウスY座標</td><td><code>mouse-y</code></td><td>現在のマウスY座標</td></tr>
+              <tr><td>ターゲットA～E</td><td><code>data-target="A"</code>等</td><td>クリック対象ボックス</td></tr>
+              <tr><td>ドラッグアイテム</td><td><code>item-1</code>, <code>item-2</code>, <code>item-3</code></td><td>ドラッグ可能要素</td></tr>
+              <tr><td>ドロップゾーン</td><td><code>data-zone</code></td><td>ドロップ先エリア</td></tr>
+              <tr><td>右クリックエリア</td><td><code>context-menu-area</code></td><td>コンテキストメニュー表示エリア</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

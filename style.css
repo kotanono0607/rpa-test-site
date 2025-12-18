@@ -1,0 +1,848 @@
+/* style.css - RPAテストサイト共通スタイル Ver.1.0 */
+
+/* ========================================
+   CSS変数（カラーテーマ）
+======================================== */
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --secondary: #64748b;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --dark: #1e293b;
+  --light: #f8fafc;
+  --border: #e2e8f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --font-main: 'Noto Sans JP', 'Segoe UI', sans-serif;
+  --font-mono: 'Consolas', 'Monaco', monospace;
+  --radius: 8px;
+  --transition: 0.2s ease;
+}
+
+/* ========================================
+   リセット・ベース
+======================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+/* ========================================
+   レイアウト
+======================================== */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ========================================
+   ヘッダー・ナビゲーション
+======================================== */
+header {
+  background: var(--dark);
+  color: white;
+  padding: 16px 0;
+  box-shadow: 0 2px 10px var(--shadow);
+}
+
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo::before {
+  content: '🤖';
+  font-size: 1.8rem;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 8px;
+}
+
+nav a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  font-size: 0.9rem;
+}
+
+nav a:hover,
+nav a.active {
+  background: var(--primary);
+  color: white;
+}
+
+/* ========================================
+   メインコンテンツ
+======================================== */
+main {
+  padding: 40px 0;
+}
+
+.page-title {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: var(--dark);
+}
+
+.page-description {
+  color: var(--secondary);
+  margin-bottom: 32px;
+  font-size: 1rem;
+}
+
+/* ========================================
+   カード
+======================================== */
+.card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px var(--shadow);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ========================================
+   フォーム要素
+======================================== */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: var(--dark);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: var(--font-main);
+  transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* ラジオボタン・チェックボックス */
+.radio-group,
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.radio-group label,
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.radio-group input,
+.checkbox-group input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* ========================================
+   ボタン
+======================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  font-family: var(--font-main);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-secondary {
+  background: var(--secondary);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #475569;
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.btn-success:hover {
+  background: #059669;
+}
+
+.btn-warning {
+  background: var(--warning);
+  color: white;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   テーブル
+======================================== */
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: var(--light);
+  font-weight: 600;
+  color: var(--dark);
+}
+
+tr:hover {
+  background: rgba(37, 99, 235, 0.05);
+}
+
+/* ========================================
+   結果表示エリア
+======================================== */
+.result-area {
+  background: var(--light);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  min-height: 100px;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.result-area.active {
+  border-color: var(--success);
+  border-style: solid;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+/* ========================================
+   ログ・履歴表示
+======================================== */
+.log-area {
+  background: var(--dark);
+  color: #a5f3fc;
+  border-radius: var(--radius);
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.log-time {
+  color: #94a3b8;
+  margin-right: 8px;
+}
+
+/* ========================================
+   ターゲットボックス（クリックテスト用）
+======================================== */
+.target-area {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 40px;
+  background: var(--light);
+  border-radius: var(--radius);
+}
+
+.target-box {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.target-box:hover {
+  transform: scale(1.1);
+}
+
+.target-box.target-a {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+.target-box.target-b {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.target-box.target-c {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.target-box.target-d {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.target-box.target-e {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+}
+
+.target-box.clicked {
+  animation: clickPulse 0.3s ease;
+}
+
+@keyframes clickPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+/* ========================================
+   座標表示
+======================================== */
+.coordinate-display {
+  background: var(--dark);
+  color: #22d3ee;
+  padding: 16px 24px;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  display: inline-block;
+}
+
+/* ========================================
+   キーボードテスト用
+======================================== */
+.key-input-area {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: white;
+  padding: 40px;
+  border-radius: var(--radius);
+  text-align: center;
+  cursor: text;
+  transition: var(--transition);
+}
+
+.key-input-area:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.key-display {
+  font-size: 2.5rem;
+  font-family: var(--font-mono);
+  font-weight: bold;
+  color: #22d3ee;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   ローディング・待機テスト用
+======================================== */
+.loading-area {
+  text-align: center;
+  padding: 40px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: var(--secondary);
+  font-size: 1.1rem;
+}
+
+.success-message {
+  color: var(--success);
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ========================================
+   モーダル
+======================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: white;
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  transform: scale(0.9);
+  transition: var(--transition);
+}
+
+.modal-overlay.active .modal {
+  transform: scale(1);
+}
+
+.modal-title {
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+}
+
+.modal-content {
+  color: var(--secondary);
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* ========================================
+   ページネーション
+======================================== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  border: 2px solid var(--border);
+  background: white;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-main);
+}
+
+.pagination button:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.pagination button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   ステータスバッジ
+======================================== */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+/* ========================================
+   グリッドレイアウト
+======================================== */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  header .container {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* ========================================
+   トップページ用カード
+======================================== */
+.test-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 4px 20px var(--shadow);
+  transition: var(--transition);
+  display: block;
+}
+
+.test-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.test-card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.test-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.test-card-desc {
+  color: var(--secondary);
+  font-size: 0.9rem;
+}
+
+/* ========================================
+   ドラッグ&ドロップエリア
+======================================== */
+.drag-area {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  padding: 20px;
+}
+
+.drag-zone {
+  width: 200px;
+  min-height: 200px;
+  border: 3px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.drag-zone.drag-over {
+  border-color: var(--primary);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.drag-zone-title {
+  font-weight: 600;
+  color: var(--secondary);
+  margin-bottom: 8px;
+}
+
+.draggable-item {
+  background: var(--primary);
+  color: white;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  cursor: grab;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.draggable-item:active {
+  cursor: grabbing;
+}
+
+.draggable-item.dragging {
+  opacity: 0.5;
+}
+
+/* ========================================
+   右クリックメニュー
+======================================== */
+.context-menu {
+  position: fixed;
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  z-index: 1000;
+  display: none;
+}
+
+.context-menu.active {
+  display: block;
+}
+
+.context-menu-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.context-menu-item:hover {
+  background: var(--light);
+}
+
+.context-menu-item:first-child {
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.context-menu-item:last-child {
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+/* ========================================
+   ファイルアップロード
+======================================== */
+.file-upload-area {
+  border: 3px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.file-upload-area:hover {
+  border-color: var(--primary);
+  background: rgba(37, 99, 235, 0.02);
+}
+
+.file-upload-area.drag-over {
+  border-color: var(--primary);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.file-upload-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+/* ========================================
+   オートコンプリート
+======================================== */
+.autocomplete-container {
+  position: relative;
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  display: none;
+}
+
+.autocomplete-list.active {
+  display: block;
+}
+
+.autocomplete-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.selected {
+  background: var(--light);
+}
+
+/* ========================================
+   フッター
+======================================== */
+footer {
+  background: var(--dark);
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+}

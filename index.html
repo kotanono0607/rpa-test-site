@@ -1,0 +1,172 @@
+<!-- index.html - RPAテストサイト トップページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html" class="active">トップ</a></li>
+          <li><a href="form.html">入力フォーム</a></li>
+          <li><a href="click.html">クリック</a></li>
+          <li><a href="keyboard.html">キーボード</a></li>
+          <li><a href="wait.html">待機</a></li>
+          <li><a href="table.html">テーブル</a></li>
+          <li><a href="popup.html">ポップアップ</a></li>
+          <li><a href="dynamic.html">動的</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">RPA テストサイト</h1>
+      <p class="page-description">UIpowershellで作成したRPAスクリプトの動作確認ができるWebサイトです。各テストページで様々な操作をテストできます。</p>
+      
+      <div class="grid-2">
+        <!-- 入力フォーム -->
+        <a href="form.html" class="test-card">
+          <div class="test-card-icon">📝</div>
+          <div class="test-card-title">入力フォーム</div>
+          <div class="test-card-desc">
+            テキスト入力、選択、チェックボックス、ラジオボタン、日付選択、オートコンプリート、ファイルアップロードをテストできます。
+          </div>
+        </a>
+
+        <!-- クリックテスト -->
+        <a href="click.html" class="test-card">
+          <div class="test-card-icon">🖱️</div>
+          <div class="test-card-title">クリックテスト</div>
+          <div class="test-card-desc">
+            マウス座標追跡、左/右/ダブルクリック、ドラッグ&ドロップ、右クリックメニューをテストできます。
+          </div>
+        </a>
+
+        <!-- キーボードテスト -->
+        <a href="keyboard.html" class="test-card">
+          <div class="test-card-icon">⌨️</div>
+          <div class="test-card-title">キーボードテスト</div>
+          <div class="test-card-desc">
+            キー入力検出、ショートカットキー（Ctrl+C等）、特殊キー（Enter, Tab, 矢印キー）をテストできます。
+          </div>
+        </a>
+
+        <!-- 待機テスト -->
+        <a href="wait.html" class="test-card">
+          <div class="test-card-icon">⏳</div>
+          <div class="test-card-title">待機テスト</div>
+          <div class="test-card-desc">
+            遅延表示、ローディング、プログレスバー、段階的表示など、待機処理をテストできます。
+          </div>
+        </a>
+
+        <!-- テーブル・データ取得 -->
+        <a href="table.html" class="test-card">
+          <div class="test-card-icon">📊</div>
+          <div class="test-card-title">テーブル・データ取得</div>
+          <div class="test-card-desc">
+            テーブルデータ抽出、検索、ページネーション、行選択をテストできます。
+          </div>
+        </a>
+
+        <!-- ポップアップ・モーダル -->
+        <a href="popup.html" class="test-card">
+          <div class="test-card-icon">💬</div>
+          <div class="test-card-title">ポップアップ・モーダル</div>
+          <div class="test-card-desc">
+            alert、confirm、prompt、モーダルダイアログの操作をテストできます。
+          </div>
+        </a>
+
+        <!-- 動的コンテンツ -->
+        <a href="dynamic.html" class="test-card">
+          <div class="test-card-icon">⚡</div>
+          <div class="test-card-title">動的コンテンツ</div>
+          <div class="test-card-desc">
+            動的要素の生成、AJAX風データ読み込み、DOM変更検出をテストできます。
+          </div>
+        </a>
+
+        <!-- 使い方 -->
+        <div class="test-card" style="cursor: default;">
+          <div class="test-card-icon">📖</div>
+          <div class="test-card-title">使い方</div>
+          <div class="test-card-desc">
+            1. 上のメニューまたはカードから各テストページへ移動<br>
+            2. RPAスクリプトで各要素を操作<br>
+            3. ログエリアで操作結果を確認
+          </div>
+        </div>
+      </div>
+
+      <!-- テスト対象一覧 -->
+      <div class="card" style="margin-top: 32px;">
+        <div class="card-title">📋 テスト対象一覧</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ページ</th>
+                <th>テスト内容</th>
+                <th>対象操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>入力フォーム</td>
+                <td>テキスト入力、選択肢、日付、ファイル</td>
+                <td>キーボード入力、マウスクリック</td>
+              </tr>
+              <tr>
+                <td>クリックテスト</td>
+                <td>座標表示、ターゲット、ドラッグ&ドロップ</td>
+                <td>マウス座標、左/右/ダブルクリック</td>
+              </tr>
+              <tr>
+                <td>キーボードテスト</td>
+                <td>ショートカットキー検出</td>
+                <td>Ctrl+C等のキー操作</td>
+              </tr>
+              <tr>
+                <td>待機テスト</td>
+                <td>遅延表示、ローディング、プログレス</td>
+                <td>待機処理</td>
+              </tr>
+              <tr>
+                <td>テーブル</td>
+                <td>データ一覧、検索、ページネーション</td>
+                <td>データ抽出、ページ移動</td>
+              </tr>
+              <tr>
+                <td>ポップアップ</td>
+                <td>alert、confirm、prompt、モーダル</td>
+                <td>ダイアログ操作</td>
+              </tr>
+              <tr>
+                <td>動的コンテンツ</td>
+                <td>動的要素生成、AJAX読み込み</td>
+                <td>DOM変更監視</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
