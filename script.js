@@ -482,7 +482,7 @@ const サンプル商品データ = [
 ];
 
 let 現在のページ = 1;
-const 1ページあたりの件数 = 5;
+const 一ページあたりの件数 = 5;
 let フィルター済みデータ = [...サンプル商品データ];
 
 /**
@@ -492,8 +492,8 @@ function テーブルを描画() {
   const tbody = document.getElementById('table-body');
   if (!tbody) return;
   
-  const startIndex = (現在のページ - 1) * 1ページあたりの件数;
-  const pageData = フィルター済みデータ.slice(startIndex, startIndex + 1ページあたりの件数);
+  const startIndex = (現在のページ - 1) * 一ページあたりの件数;
+  const pageData = フィルター済みデータ.slice(startIndex, startIndex + 一ページあたりの件数);
   
   tbody.innerHTML = pageData.map(item => `
     <tr data-id="${item.id}">
@@ -518,7 +518,7 @@ function ページネーションを更新() {
   const pagination = document.getElementById('pagination');
   if (!pagination) return;
   
-  const totalPages = Math.ceil(フィルター済みデータ.length / 1ページあたりの件数);
+  const totalPages = Math.ceil(フィルター済みデータ.length / 一ページあたりの件数);
   
   let html = `<button onclick="ページを変更(${現在のページ - 1})" ${現在のページ <= 1 ? 'disabled' : ''}>&lt; 前へ</button>`;
   
@@ -536,7 +536,7 @@ function ページネーションを更新() {
  * @param {number} page - ページ番号
  */
 function ページを変更(page) {
-  const totalPages = Math.ceil(フィルター済みデータ.length / 1ページあたりの件数);
+  const totalPages = Math.ceil(フィルター済みデータ.length / 一ページあたりの件数);
   if (page < 1 || page > totalPages) return;
   
   現在のページ = page;
