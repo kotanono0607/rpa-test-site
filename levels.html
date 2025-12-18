@@ -1,0 +1,679 @@
+<!-- levels.html - レベルモード（段階的学習）ページ Ver.1.0 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>レベルモード - RPA テストサイト</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .level-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border: 3px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .level-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    .level-card.locked {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .level-card.cleared {
+      border-color: var(--success);
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    }
+    .level-card.current {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+    }
+    .level-number {
+      position: absolute;
+      top: -12px;
+      left: -12px;
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .level-card.cleared .level-number {
+      background: var(--success);
+    }
+    .level-card.locked .level-number {
+      background: var(--secondary);
+    }
+    .level-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      padding-left: 20px;
+    }
+    .level-desc {
+      color: var(--secondary);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+    .level-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+    .level-status .stars {
+      color: #fbbf24;
+    }
+    .level-status .locked-text {
+      color: var(--secondary);
+    }
+    .level-status .cleared-text {
+      color: var(--success);
+      font-weight: bold;
+    }
+    .level-arena {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      min-height: 400px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .level-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+    .level-header h2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .level-header .level-badge {
+      background: var(--primary);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+    .mission-box {
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid var(--primary);
+    }
+    .mission-box h3 {
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+    .level-content {
+      padding: 20px;
+      background: var(--light);
+      border-radius: 8px;
+      min-height: 200px;
+    }
+    .level-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .progress-bar-container {
+      background: var(--border);
+      border-radius: 10px;
+      height: 20px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success), #34d399);
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .celebration {
+      text-align: center;
+      padding: 40px;
+      animation: celebrate 0.5s ease;
+    }
+    @keyframes celebrate {
+      0% { transform: scale(0.8); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .celebration h2 {
+      font-size: 2rem;
+      color: var(--success);
+      margin-bottom: 16px;
+    }
+    .celebration .stars {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">RPA テストサイト</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="form.html">入力フォーム</a></li>
+          <li><a href="click.html">クリック</a></li>
+          <li><a href="keyboard.html">キーボード</a></li>
+          <li><a href="wait.html">待機</a></li>
+          <li><a href="table.html">テーブル</a></li>
+          <li><a href="popup.html">ポップアップ</a></li>
+          <li><a href="dynamic.html">動的</a></li>
+          <li><a href="advanced.html">高度</a></li>
+          <li><a href="challenge.html">挑戦</a></li>
+          <li><a href="levels.html" class="active">レベル</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 class="page-title">🎮 レベルモード</h1>
+      <p class="page-description">ステップバイステップでRPA操作を学ぼう！各レベルをクリアして次に進もう。</p>
+
+      <!-- 進捗バー -->
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="total-progress" style="width: 0%;">0%</div>
+      </div>
+
+      <!-- レベル一覧 -->
+      <div class="level-grid" id="level-grid">
+        <!-- JavaScriptで生成 -->
+      </div>
+
+      <!-- レベルプレイエリア -->
+      <div class="level-arena" id="level-arena">
+        <div style="text-align: center; padding: 60px; color: var(--secondary);">
+          <p style="font-size: 1.2rem;">上からレベルを選択してください</p>
+        </div>
+      </div>
+
+      <!-- 操作ログ -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">📜 操作ログ</div>
+        <div id="level-log" class="log-area">
+          <div class="log-entry"><span class="log-time">[--:--:--]</span>レベルモードへようこそ！</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>RPA Test Site for UIpowershell - Created for automation testing</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // レベルデータ
+    const levels = [
+      {
+        id: 1,
+        title: 'ボタンクリック',
+        desc: 'ボタンをクリックしてみよう',
+        mission: '「クリック！」ボタンをクリックしてください',
+        type: 'click'
+      },
+      {
+        id: 2,
+        title: 'テキスト入力',
+        desc: '入力フィールドに文字を入力しよう',
+        mission: '入力欄に「RPA」と入力してください',
+        type: 'input',
+        answer: 'RPA'
+      },
+      {
+        id: 3,
+        title: 'プルダウン選択',
+        desc: 'セレクトボックスから選択しよう',
+        mission: '「東京都」を選択してください',
+        type: 'select',
+        answer: 'tokyo'
+      },
+      {
+        id: 4,
+        title: 'チェックボックス',
+        desc: 'チェックボックスをONにしよう',
+        mission: '「同意する」にチェックを入れてください',
+        type: 'checkbox'
+      },
+      {
+        id: 5,
+        title: 'ラジオボタン',
+        desc: '選択肢から1つ選ぼう',
+        mission: '「オプションB」を選択してください',
+        type: 'radio',
+        answer: 'b'
+      },
+      {
+        id: 6,
+        title: '連続クリック',
+        desc: '指定された順番でクリックしよう',
+        mission: 'ボタンを1→2→3の順にクリックしてください',
+        type: 'sequence'
+      },
+      {
+        id: 7,
+        title: 'フォーム入力',
+        desc: '複数のフィールドを入力しよう',
+        mission: '名前とメールアドレスを入力して送信してください',
+        type: 'form'
+      },
+      {
+        id: 8,
+        title: 'テーブル操作',
+        desc: 'テーブルから特定の行を選択しよう',
+        mission: '「りんご」の行の「選択」ボタンをクリックしてください',
+        type: 'table'
+      },
+      {
+        id: 9,
+        title: '待機して操作',
+        desc: '要素が表示されるまで待ってから操作しよう',
+        mission: 'ボタンが表示されたらクリックしてください（2秒後に表示）',
+        type: 'wait'
+      },
+      {
+        id: 10,
+        title: '総合テスト',
+        desc: 'すべてのスキルを使おう',
+        mission: '入力→選択→チェック→送信の順に操作してください',
+        type: 'final'
+      }
+    ];
+
+    // クリア状態を管理
+    let clearedLevels = JSON.parse(localStorage.getItem('rpa-cleared-levels') || '[]');
+    let currentLevel = null;
+
+    // レベル一覧を描画
+    function renderLevelGrid() {
+      const grid = document.getElementById('level-grid');
+      grid.innerHTML = levels.map((level, index) => {
+        const isCleared = clearedLevels.includes(level.id);
+        const isLocked = index > 0 && !clearedLevels.includes(levels[index - 1].id);
+        const isCurrent = !isCleared && !isLocked;
+
+        let statusHtml = '';
+        if (isCleared) {
+          statusHtml = '<span class="cleared-text">✅ クリア済み</span><span class="stars">⭐⭐⭐</span>';
+        } else if (isLocked) {
+          statusHtml = '<span class="locked-text">🔒 前のレベルをクリアしてください</span>';
+        } else {
+          statusHtml = '<span style="color: var(--primary);">▶ 挑戦可能</span>';
+        }
+
+        return `
+          <div class="level-card ${isCleared ? 'cleared' : ''} ${isLocked ? 'locked' : ''} ${isCurrent ? 'current' : ''}"
+               onclick="${isLocked ? '' : `startLevel(${level.id})`}">
+            <div class="level-number">${level.id}</div>
+            <div class="level-title">${level.title}</div>
+            <div class="level-desc">${level.desc}</div>
+            <div class="level-status">${statusHtml}</div>
+          </div>
+        `;
+      }).join('');
+
+      // 進捗バーを更新
+      const progress = (clearedLevels.length / levels.length) * 100;
+      document.getElementById('total-progress').style.width = progress + '%';
+      document.getElementById('total-progress').textContent = Math.round(progress) + '%';
+    }
+
+    // レベルを開始
+    function startLevel(levelId) {
+      const level = levels.find(l => l.id === levelId);
+      if (!level) return;
+
+      currentLevel = level;
+      ログを追加('level-log', `レベル${level.id}「${level.title}」を開始`);
+
+      const arena = document.getElementById('level-arena');
+      arena.innerHTML = `
+        <div class="level-header">
+          <h2><span class="level-badge">Level ${level.id}</span> ${level.title}</h2>
+          <button class="btn btn-secondary" onclick="renderLevelGrid(); resetArena();">戻る</button>
+        </div>
+        <div class="mission-box">
+          <h3>📋 ミッション</h3>
+          <p>${level.mission}</p>
+        </div>
+        <div class="level-content" id="level-content">
+          ${getLevelContent(level)}
+        </div>
+      `;
+    }
+
+    // レベルのコンテンツを生成
+    function getLevelContent(level) {
+      switch (level.type) {
+        case 'click':
+          return `
+            <div style="text-align: center; padding: 40px;">
+              <button class="btn btn-primary" style="font-size: 1.5rem; padding: 20px 60px;"
+                      onclick="checkAnswer('click')">クリック！</button>
+            </div>
+          `;
+
+        case 'input':
+          return `
+            <div style="max-width: 400px; margin: 0 auto; padding: 40px;">
+              <div class="form-group">
+                <label>テキストを入力:</label>
+                <input type="text" id="level-input" placeholder="ここに入力...">
+              </div>
+              <button class="btn btn-primary" onclick="checkAnswer('input')">確認</button>
+            </div>
+          `;
+
+        case 'select':
+          return `
+            <div style="max-width: 400px; margin: 0 auto; padding: 40px;">
+              <div class="form-group">
+                <label>都道府県を選択:</label>
+                <select id="level-select">
+                  <option value="">選択してください</option>
+                  <option value="hokkaido">北海道</option>
+                  <option value="tokyo">東京都</option>
+                  <option value="osaka">大阪府</option>
+                  <option value="fukuoka">福岡県</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" onclick="checkAnswer('select')">確認</button>
+            </div>
+          `;
+
+        case 'checkbox':
+          return `
+            <div style="max-width: 400px; margin: 0 auto; padding: 40px;">
+              <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                  <input type="checkbox" id="level-checkbox" style="width: 24px; height: 24px;">
+                  <span style="font-size: 1.1rem;">同意する</span>
+                </label>
+              </div>
+              <button class="btn btn-primary" onclick="checkAnswer('checkbox')">確認</button>
+            </div>
+          `;
+
+        case 'radio':
+          return `
+            <div style="max-width: 400px; margin: 0 auto; padding: 40px;">
+              <div class="form-group">
+                <label>オプションを選択:</label>
+                <div class="radio-group" style="margin-top: 12px;">
+                  <label style="display: block; margin: 8px 0; cursor: pointer;">
+                    <input type="radio" name="level-radio" value="a"> オプションA
+                  </label>
+                  <label style="display: block; margin: 8px 0; cursor: pointer;">
+                    <input type="radio" name="level-radio" value="b"> オプションB
+                  </label>
+                  <label style="display: block; margin: 8px 0; cursor: pointer;">
+                    <input type="radio" name="level-radio" value="c"> オプションC
+                  </label>
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="checkAnswer('radio')">確認</button>
+            </div>
+          `;
+
+        case 'sequence':
+          return `
+            <div style="text-align: center; padding: 40px;">
+              <p style="margin-bottom: 20px;">進捗: <span id="seq-progress">0</span>/3</p>
+              <div style="display: flex; gap: 16px; justify-content: center;">
+                <button class="btn btn-secondary" style="font-size: 1.3rem; padding: 15px 30px;"
+                        onclick="checkSequence(1)" id="seq-btn-1">1</button>
+                <button class="btn btn-secondary" style="font-size: 1.3rem; padding: 15px 30px;"
+                        onclick="checkSequence(2)" id="seq-btn-2">2</button>
+                <button class="btn btn-secondary" style="font-size: 1.3rem; padding: 15px 30px;"
+                        onclick="checkSequence(3)" id="seq-btn-3">3</button>
+              </div>
+            </div>
+          `;
+
+        case 'form':
+          return `
+            <div style="max-width: 400px; margin: 0 auto; padding: 20px;">
+              <div class="form-group">
+                <label>名前:</label>
+                <input type="text" id="form-name" placeholder="名前を入力">
+              </div>
+              <div class="form-group">
+                <label>メールアドレス:</label>
+                <input type="email" id="form-email" placeholder="メールを入力">
+              </div>
+              <button class="btn btn-primary" onclick="checkAnswer('form')">送信</button>
+            </div>
+          `;
+
+        case 'table':
+          return `
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr><th>ID</th><th>商品名</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>001</td><td>りんご</td><td><button class="btn btn-primary" onclick="checkAnswer('table', 'りんご')">選択</button></td></tr>
+                  <tr><td>002</td><td>みかん</td><td><button class="btn btn-secondary" onclick="checkAnswer('table', 'みかん')">選択</button></td></tr>
+                  <tr><td>003</td><td>ぶどう</td><td><button class="btn btn-secondary" onclick="checkAnswer('table', 'ぶどう')">選択</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          `;
+
+        case 'wait':
+          setTimeout(() => {
+            const container = document.getElementById('wait-btn-container');
+            if (container) {
+              container.innerHTML = '<button class="btn btn-success" style="font-size: 1.2rem;" onclick="checkAnswer(\'wait\')">今だ！クリック！</button>';
+            }
+          }, 2000);
+          return `
+            <div style="text-align: center; padding: 40px;">
+              <p style="margin-bottom: 20px;">ボタンが表示されるまで待ってください...</p>
+              <div id="wait-btn-container">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          `;
+
+        case 'final':
+          return `
+            <div style="max-width: 500px; margin: 0 auto; padding: 20px;">
+              <div class="form-group">
+                <label>1. 名前を入力:</label>
+                <input type="text" id="final-name" placeholder="名前">
+              </div>
+              <div class="form-group">
+                <label>2. カテゴリを選択:</label>
+                <select id="final-select">
+                  <option value="">選択してください</option>
+                  <option value="a">カテゴリA</option>
+                  <option value="b">カテゴリB</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                  <input type="checkbox" id="final-check">
+                  <span>3. 確認しました</span>
+                </label>
+              </div>
+              <button class="btn btn-primary" onclick="checkAnswer('final')">4. 送信</button>
+            </div>
+          `;
+
+        default:
+          return '<p>Coming soon...</p>';
+      }
+    }
+
+    // 回答をチェック
+    let sequenceProgress = 0;
+
+    function checkAnswer(type, extra) {
+      let success = false;
+
+      switch (type) {
+        case 'click':
+          success = true;
+          break;
+
+        case 'input':
+          const inputVal = document.getElementById('level-input').value;
+          success = inputVal.toUpperCase() === currentLevel.answer;
+          break;
+
+        case 'select':
+          const selectVal = document.getElementById('level-select').value;
+          success = selectVal === currentLevel.answer;
+          break;
+
+        case 'checkbox':
+          success = document.getElementById('level-checkbox').checked;
+          break;
+
+        case 'radio':
+          const radioVal = document.querySelector('input[name="level-radio"]:checked')?.value;
+          success = radioVal === currentLevel.answer;
+          break;
+
+        case 'form':
+          const name = document.getElementById('form-name').value;
+          const email = document.getElementById('form-email').value;
+          success = name.length > 0 && email.includes('@');
+          break;
+
+        case 'table':
+          success = extra === 'りんご';
+          break;
+
+        case 'wait':
+          success = true;
+          break;
+
+        case 'final':
+          const fName = document.getElementById('final-name').value;
+          const fSelect = document.getElementById('final-select').value;
+          const fCheck = document.getElementById('final-check').checked;
+          success = fName.length > 0 && fSelect && fCheck;
+          break;
+      }
+
+      if (success) {
+        clearLevel();
+      } else {
+        ログを追加('level-log', '❌ 条件を満たしていません。もう一度試してください。');
+        alert('条件を満たしていません。もう一度試してください。');
+      }
+    }
+
+    function checkSequence(num) {
+      const expected = sequenceProgress + 1;
+      if (num === expected) {
+        sequenceProgress++;
+        document.getElementById('seq-progress').textContent = sequenceProgress;
+        document.getElementById(`seq-btn-${num}`).classList.add('btn-success');
+        document.getElementById(`seq-btn-${num}`).classList.remove('btn-secondary');
+
+        if (sequenceProgress === 3) {
+          setTimeout(() => clearLevel(), 300);
+        }
+      } else {
+        sequenceProgress = 0;
+        document.getElementById('seq-progress').textContent = '0';
+        [1, 2, 3].forEach(n => {
+          document.getElementById(`seq-btn-${n}`).classList.remove('btn-success');
+          document.getElementById(`seq-btn-${n}`).classList.add('btn-secondary');
+        });
+        ログを追加('level-log', '❌ 順番が違います。1からやり直してください。');
+      }
+    }
+
+    // レベルクリア
+    function clearLevel() {
+      if (!clearedLevels.includes(currentLevel.id)) {
+        clearedLevels.push(currentLevel.id);
+        localStorage.setItem('rpa-cleared-levels', JSON.stringify(clearedLevels));
+      }
+
+      ログを追加('level-log', `🎉 レベル${currentLevel.id}「${currentLevel.title}」クリア！`);
+
+      const arena = document.getElementById('level-arena');
+      arena.innerHTML = `
+        <div class="celebration">
+          <div class="stars">⭐⭐⭐</div>
+          <h2>🎉 レベル${currentLevel.id} クリア！</h2>
+          <p style="font-size: 1.2rem; margin-bottom: 24px;">${currentLevel.title}をマスターしました！</p>
+          <div class="level-actions">
+            ${currentLevel.id < levels.length
+              ? `<button class="btn btn-primary" onclick="startLevel(${currentLevel.id + 1})">次のレベルへ →</button>`
+              : `<button class="btn btn-success" onclick="alert('おめでとう！全レベルクリア！')">🏆 全クリア！</button>`
+            }
+            <button class="btn btn-secondary" onclick="renderLevelGrid(); resetArena();">レベル選択に戻る</button>
+          </div>
+        </div>
+      `;
+
+      renderLevelGrid();
+    }
+
+    // アリーナをリセット
+    function resetArena() {
+      sequenceProgress = 0;
+      document.getElementById('level-arena').innerHTML = `
+        <div style="text-align: center; padding: 60px; color: var(--secondary);">
+          <p style="font-size: 1.2rem;">上からレベルを選択してください</p>
+        </div>
+      `;
+    }
+
+    // 進捗リセット
+    function resetProgress() {
+      if (confirm('進捗をリセットしますか？')) {
+        clearedLevels = [];
+        localStorage.removeItem('rpa-cleared-levels');
+        renderLevelGrid();
+        resetArena();
+        ログを追加('level-log', '進捗がリセットされました');
+      }
+    }
+
+    // 初期化
+    renderLevelGrid();
+  </script>
+</body>
+</html>
